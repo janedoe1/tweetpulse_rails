@@ -59,18 +59,22 @@
             <% if user_signed_in? %>
               <ul class="nav pull-right">
                 <li class="dropdown">
-                <a class="dropdown-toggle" data-toggle="dropdown" href="#"><i class="icon-user"></i> <%= current_user.email %><%#= image_tag current_user.twitter.user.profile_image_url, :height => "30", :width => '30' %><b class="caret"></b></a>
-                    <ul class="dropdown-menu">
-                      <li><%= link_to raw("<i class='icon-pencil pull-left'></i> Manage Terms"), terms_path %></li>
-                      <li><%= link_to raw("<i class='icon-wrench'></i> Edit Settings"), edit_user_registration_path %></li>
+                <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                  <%= raw("<i class='icon-user icon-white'></i>") unless current_user.twitter_auth %> 
+                  <%= image_tag current_user.twitter_auth.profile_image_url, :height => "25", :width => '25' if current_user.twitter_auth %>
+                  <b class="caret"></b></a>
+                    <ul class="dropdown-menu" style="min-width:200px;">
+                      <li style="margin-left:10px;"><%= current_user.email %></li>
                       <li class="divider"></li>
+                      <li><%= link_to raw("<i class='icon-pencil'></i> Manage Terms"), terms_path %></li>
+                      <li><%= link_to raw("<i class='icon-cog'></i>  Edit Settings"), edit_user_registration_path %></li>
                       <li><%= link_to raw("<i class='icon-share-alt'></i> Sign Out"), destroy_user_session_path, :method => 'delete' %></li>
                     </ul>
                 </li>
               </ul>
               <ul class="nav">
-                <li><%= link_to "Dashboard", "/dashboard"  %></li>
-                <li><%= link_to "Add Term", new_term_path  %></li>
+                <li><%= link_to raw("<i class='icon-th-large icon-white'></i> Dashboard"), "/dashboard"  %></li>
+                <li><%= link_to raw("<i class='icon-plus-sign icon-white'></i> Add Term"), new_term_path  %></li>
               </ul>
             <% end %>
           </div><!--/.nav-collapse -->

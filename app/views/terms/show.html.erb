@@ -1,6 +1,8 @@
 <%- model_class = Term -%>
-  <legend class="pull-left"><%= "Tweets matching #{@term.type.downcase} '#{@term.text}'" %>
-    <span class="pull-right" style="font-size:.6em"><%= link_to raw("<i class='icon-refresh'></i> Refresh results"), refresh_term_results_path(@term.id) %></span></legend>
+<div class="page-header">
+  <h4><%= "Tweets matching #{@term.type.downcase} '#{@term.text}'" %><small class="pull-right" style="padding-top:3px;"><i class='icon-refresh'></i> <%= link_to "Refresh results", refresh_term_results_path(@term.id) %></small></h4>
+</div>
+
   
 
 <dl class="dl-horizontal">
