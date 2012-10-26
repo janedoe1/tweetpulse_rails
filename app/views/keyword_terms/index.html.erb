@@ -1,0 +1,21 @@
+<h1>Listing keyword_terms</h1>
+
+<table>
+  <tr>
+    <th></th>
+    <th></th>
+    <th></th>
+  </tr>
+
+<% @keyword_terms.each do |keyword_term| %>
+  <tr>
+    <td><%= link_to 'Show', keyword_term %></td>
+    <td><%= link_to 'Edit', edit_keyword_term_path(keyword_term) %></td>
+    <td><%= link_to 'Destroy', keyword_term, confirm: 'Are you sure?', method: :delete %></td>
+  </tr>
+<% end %>
+</table>
+
+<br />
+
+<%= link_to 'New Keyword term', new_keyword_term_path %>

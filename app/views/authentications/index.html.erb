@@ -1,0 +1,44 @@
+<%- model_class = Authentication -%>
+<div class="page-header">
+  <h1><%=t '.title', :default => model_class.model_name.human.pluralize %></h1>
+</div>
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th><%= model_class.human_attribute_name(:id) %></th>
+      <th><%= model_class.human_attribute_name(:user_id) %></th>
+      <th><%= model_class.human_attribute_name(:provider) %></th>
+      <th><%= model_class.human_attribute_name(:uid) %></th>
+      <th><%= model_class.human_attribute_name(:token) %></th>
+      <th><%= model_class.human_attribute_name(:secret) %></th>
+      <th><%= model_class.human_attribute_name(:created_at) %></th>
+      <th><%=t '.actions', :default => t("helpers.actions") %></th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @authentications.each do |authentication| %>
+      <tr>
+        <td><%= link_to authentication.id, authentication_path(authentication) %></td>
+        <td><%= authentication.user_id %></td>
+        <td><%= authentication.provider %></td>
+        <td><%= authentication.uid %></td>
+        <td><%= authentication.token %></td>
+        <td><%= authentication.secret %></td>
+        <td><%=l authentication.created_at %></td>
+        <td>
+          <%= link_to t('.edit', :default => t("helpers.links.edit")),
+                      edit_authentication_path(authentication), :class => 'btn btn-mini' %>
+          <%= link_to t('.destroy', :default => t("helpers.links.destroy")),
+                      authentication_path(authentication),
+                      :method => :delete,
+                      :data => { :confirm => t('.confirm', :default => t("helpers.links.confirm", :default => 'Are you sure?')) },
+                      :class => 'btn btn-mini btn-danger' %>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<%= link_to t('.new', :default => t("helpers.links.new")),
+            new_authentication_path,
+            :class => 'btn btn-primary' %>

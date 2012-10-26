@@ -1,0 +1,34 @@
+<%= simple_form_for(@term, :html => { :class => 'form-horizontal' }) do |f| %>
+  <%= f.input :type, :collection => ['KeywordTerm', 'HashtagTerm', 'UserTerm'], :required => true %>
+  <%#= f.hidden_field :type, :value => "" %>
+  <%= f.input :text, :wrapper => :prepend, :label => false do %>
+    <%= content_tag :span, "", :class => "add-on" %>
+    <%= f.input_field :text, :required => true, :disabled => true %>
+  <% end %>
+  <%= f.button :submit, :class => 'btn-primary' %>
+  <%= submit_tag 'Cancel', :type => :reset, :class => "btn btn-danger" %>
+<% end %>
+
+<script type="text/javascript">
+  $(document).ready(function() {
+    $('.add-on').hide();
+    $('#term_type').change(function() {
+      type = $(this).val();
+      if (type == 'HashtagTerm') {
+        $('.add-on').text('#');
+        $('.add-on').show();
+        $('#term_text').removeAttr("disabled");
+      } else if (type == 'UserTerm') {
+        $('.add-on').text('@');
+        $('.add-on').show();
+        $('#term_text').removeAttr("disabled");
+      } else if (type == 'KeywordTerm') {
+        $('.add-on').hide();
+        $('#term_text').removeAttr("disabled");
+      } else {
+        $('.add-on').hide();
+        $('#term_text').attr("disabled", true);
+      }
+    });
+  })
+</script>

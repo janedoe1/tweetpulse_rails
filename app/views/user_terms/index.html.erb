@@ -1,0 +1,21 @@
+<h1>Listing user_terms</h1>
+
+<table>
+  <tr>
+    <th></th>
+    <th></th>
+    <th></th>
+  </tr>
+
+<% @user_terms.each do |user_term| %>
+  <tr>
+    <td><%= link_to 'Show', user_term %></td>
+    <td><%= link_to 'Edit', edit_user_term_path(user_term) %></td>
+    <td><%= link_to 'Destroy', user_term, confirm: 'Are you sure?', method: :delete %></td>
+  </tr>
+<% end %>
+</table>
+
+<br />
+
+<%= link_to 'New User term', new_user_term_path %>

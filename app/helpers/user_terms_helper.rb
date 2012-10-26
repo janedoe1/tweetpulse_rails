@@ -1,0 +1,2 @@
+module UserTermsHelper
+end
