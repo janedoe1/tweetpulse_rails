@@ -58,11 +58,12 @@
           <div class="container nav-collapse">
             <% if user_signed_in? %>
               <ul class="nav pull-right">
+                <li class="divider-vertical"></li>
                 <li class="dropdown">
                 <a class="dropdown-toggle" data-toggle="dropdown" href="#">
                   <%= raw("<i class='icon-user icon-white'></i>") unless current_user.twitter_auth %> 
                   <%= image_tag current_user.twitter_auth.profile_image_url, :height => "25", :width => '25' if current_user.twitter_auth %>
-                  <b class="caret"></b></a>
+                  <span class="caret"></span></a>
                     <ul class="dropdown-menu" style="min-width:200px;">
                       <li style="margin-left:10px;"><%= current_user.email %></li>
                       <li class="divider"></li>
@@ -71,6 +72,7 @@
                       <li><%= link_to raw("<i class='icon-share-alt'></i> Sign Out"), destroy_user_session_path, :method => 'delete' %></li>
                     </ul>
                 </li>
+                <li class="divider-vertical"></li>
               </ul>
               <ul class="nav">
                 <li><%= link_to raw("<i class='icon-th-large icon-white'></i> Dashboard"), "/dashboard"  %></li>
