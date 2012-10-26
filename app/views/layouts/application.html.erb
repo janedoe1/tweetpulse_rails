@@ -13,6 +13,12 @@
     <![endif]-->
 
     <%= stylesheet_link_tag "application", :media => "all" %>
+    <link href='http://fonts.googleapis.com/css?family=Leckerli+One' rel='stylesheet' type='text/css'>
+    <style>
+    .brand {
+      font-family: 'Leckerli One', cursive;
+    }
+    </style>
     <%= javascript_include_tag "application" %>
     <!-- For third-generation iPad with high-resolution Retina display: -->
     <!-- Size should be 144 x 144 pixels -->
@@ -36,7 +42,7 @@
   </head>
   <body>
 
-    <div class="navbar navbar-fixed-top">
+    <div class="navbar navbar-inverse navbar-fixed-top">
       <div class="navbar-inner">
         <div class="container">
           <a class="btn btn-navbar" data-target=".nav-collapse" data-toggle="collapse">
