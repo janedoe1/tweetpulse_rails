@@ -1,12 +1,16 @@
 <%= simple_form_for(@term, :html => { :class => 'form-horizontal' }) do |f| %>
+  <div class="form-inputs">
   <%= f.input :type, :collection => ['KeywordTerm', 'HashtagTerm', 'UserTerm'], :required => true %>
   <%#= f.hidden_field :type, :value => "" %>
   <%= f.input :text, :wrapper => :prepend, :label => false do %>
     <%= content_tag :span, "", :class => "add-on" %>
     <%= f.input_field :text, :required => true, :disabled => true %>
   <% end %>
+  </div>
+   <div class="form-actions">
   <%= f.button :submit, :class => 'btn-primary' %>
   <%= submit_tag 'Cancel', :type => :reset, :class => "btn btn-danger" %>
+  </div>
 <% end %>
 
 <script type="text/javascript">
