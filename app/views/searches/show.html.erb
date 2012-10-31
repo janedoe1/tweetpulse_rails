@@ -1,0 +1,42 @@
+<%- model_class = Search -%>
+<div class="page-header">
+  <h4><%= "Tweets matching search '#{@search.label}'" %><small class="pull-right" style="padding-top:3px;"><i class='icon-refresh'></i> <%= link_to "Refresh results", refresh_search_results_path(@search.id) %></small></h4>
+</div>
+
+  
+
+<dl class="dl-horizontal">
+  <% if @tweets %>
+    <% @tweets.each do |tweet| %>
+      <dt><strong><%= tweet.twitter_user.handle %>:</strong></dt>
+      <dd><%= link_to tweet.text, tweet_path(tweet) %></dd>
+    <% end %>
+  <% end %>
+</dl>
+<div id="sig" class="span9" style="height:800px;position:relative; background:#ccc"></div>
+
+<script type="text/javascript">
+
+$(document).ready(function(){
+  var sigRoot = document.getElementById('sig');
+  var sigInst = sigma.init(sigRoot);
+  sigInst.drawingProperties({
+    defaultLabelColor: '#ccc',
+    font: 'Arial',
+    edgeColor: '#000',
+    defaultEdgeType: 'curve'
+  }).graphProperties({
+    minNodeSize: 6,
+    maxNodeSize: 10
+  });
+  sigInst.addNode('0',{label: <%= "\'"+@search.label+"\'" %>, color: 'red'});
+  <% @search.tweets.each_with_index do |tweet, index| %>
+    sigInst.addNode(<%= "\'"+tweet.tweet_id+"\'" %>,{label: <%= "\'"+tweet.twitter_user.handle+"\'" %>, color: 'green', position: {x:'20', y: '30', z:'0'}, size: '100'});
+  <% end %>
+  <% @search.tweets.each_with_index do |tweet, index| %>
+    sigInst.addEdge(<%= "\'"+tweet.tweet_id+"\'" %>,'0',<%= "\'"+tweet.tweet_id+"\'" %>);
+  <% end %>
+  sigInst.draw();
+})
+
+</script>

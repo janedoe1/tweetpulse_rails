@@ -1,5 +1,7 @@
 Tweetpulse::Application.routes.draw do
   
+  resources :searches
+
   resources :tweets
 
   match '/auth/:provider/callback' => 'authentications#create' 
@@ -18,7 +20,7 @@ Tweetpulse::Application.routes.draw do
   root :to => 'dashboard#index'
   get "/dashboard", :as => "dashboard", :to => "dashboard#index"
   
-  get "/terms/:term_id/refresh", :as => "refresh_term_results", :to => "terms#refresh_results"
+  get "/searches/:search_id/refresh", :as => "refresh_search_results", :to => "searches#refresh_results"
   
   get "/auth/twitter", :as => "twitter_auth"
   

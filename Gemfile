@@ -26,11 +26,17 @@ gem 'jquery-rails'
 
 gem 'twitter-bootstrap-rails', :git => 'git://github.com/seyhunak/twitter-bootstrap-rails.git'
 
+gem 'd3_rails'
 gem 'simple_form'
 gem 'twitter'
 gem 'devise'
-# gem 'omniauth'
 gem 'omniauth-twitter'
+gem 'nokogiri'
+gem 'builder'
+gem 'httparty'
+
+# gem 'omniauth'
+
 # To use ActiveModel has_secure_password
 # gem 'bcrypt-ruby', '~> 3.0.0'
 

@@ -1,0 +1,15 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
+
+one:
+  tweet_id: MyString
+  label: MyString
+  negative: 1.5
+  positive: 1.5
+  neutral: 1.5
+
+two:
+  tweet_id: MyString
+  label: MyString
+  negative: 1.5
+  positive: 1.5
+  neutral: 1.5

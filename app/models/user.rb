@@ -1,7 +1,7 @@
 class User < ActiveRecord::Base
   
   has_many :authentications
-  has_many :terms
+  has_many :searches
   
   # Include default devise modules. Others available are:
   # :token_authenticatable, :confirmable,

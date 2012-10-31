@@ -14,8 +14,15 @@ class TweetsController < ApplicationController
   # GET /tweets/1.json
   def show
     @tweet = Tweet.find(params[:id])
-    @data = @tweet.get_data(current_user)
+    begin
+      @data = @tweet.get_data(current_user)
+    rescue Twitter::Error::TooManyRequests
+      flash[:error] = "You have exceeded Twitter's API request limit. Please try again in 15 minutes."
+      redirect_to term_path(@tweet.term.id)
+    end
     #raise @data.inspect
+    data = "[{'name':'flare.analytics.cluster.AgglomerativeCluster','size':3938,'imports':['flare.animate.Transitioner','flare.vis.data.DataList','flare.util.math.IMatrix','flare.analytics.cluster.MergeEdge','flare.analytics.cluster.HierarchicalCluster','flare.vis.data.Data']}]"
+
   end
 
   # GET /tweets/new

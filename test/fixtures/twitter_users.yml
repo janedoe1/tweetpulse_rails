@@ -1,0 +1,15 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
+
+one:
+  user_id: MyString
+  handle: MyString
+  follower_count: 1
+  friend_count: 1
+  location: MyString
+
+two:
+  user_id: MyString
+  handle: MyString
+  follower_count: 1
+  friend_count: 1
+  location: MyString

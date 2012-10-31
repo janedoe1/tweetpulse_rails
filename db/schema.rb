@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20121026164154) do
+ActiveRecord::Schema.define(:version => 20121031034830) do
 
   create_table "authentications", :force => true do |t|
     t.integer  "user_id"
@@ -25,6 +25,27 @@ ActiveRecord::Schema.define(:version => 20121026164154) do
     t.string   "profile_image_url"
   end
 
+  create_table "searches", :force => true do |t|
+    t.integer  "user_id"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
+  end
+
+  create_table "searches_terms", :id => false, :force => true do |t|
+    t.integer "search_id"
+    t.integer "term_id"
+  end
+
+  create_table "sentiments", :force => true do |t|
+    t.string   "tweet_id"
+    t.string   "label"
+    t.float    "negative"
+    t.float    "positive"
+    t.float    "neutral"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
+  end
+
   create_table "terms", :force => true do |t|
     t.string   "type"
     t.string   "text"
@@ -35,11 +56,23 @@ ActiveRecord::Schema.define(:version => 20121026164154) do
 
   create_table "tweets", :force => true do |t|
     t.string   "tweet_id"
-    t.datetime "created_at", :null => false
-    t.datetime "updated_at", :null => false
-    t.integer  "term_id"
+    t.datetime "created_at",      :null => false
+    t.datetime "updated_at",      :null => false
     t.string   "text"
-    t.string   "from_user"
+    t.integer  "reply_count"
+    t.datetime "tweeted_at"
+    t.integer  "search_id"
+    t.integer  "twitter_user_id"
+  end
+
+  create_table "twitter_users", :force => true do |t|
+    t.string   "user_id"
+    t.string   "handle"
+    t.integer  "follower_count"
+    t.integer  "friend_count"
+    t.string   "location"
+    t.datetime "created_at",     :null => false
+    t.datetime "updated_at",     :null => false
   end
 
   create_table "users", :force => true do |t|

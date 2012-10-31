@@ -1,13 +1,41 @@
 <%- model_class = Tweet -%>
 <div class="page-header">
-  <h4>Tweet from <%= link_to @tweet.from_user, twitter_user_page(@tweet.from_user) %> matching <%= "#{@tweet.term.type} '#{@tweet.term.text}'" %><small class="pull-right" style="padding-top:3px;"><i class='icon-refresh'></i> <%= link_to "Refresh results", refresh_term_results_path(@tweet.id) %></small></h4>
+  <h4>Tweet from <%= link_to @tweet.twitter_user.handle, twitter_user_page(@tweet.twitter_user.handle) %> matching <%= "'#{@tweet.search.label}'" %><small class="pull-right" style="padding-top:3px;"><i class='icon-refresh'></i> <%= link_to "Refresh results", refresh_search_results_path(@tweet.id) %></small></h4>
 </div>
 
 <dl class="dl-horizontal">
-  <dt><strong><%= model_class.human_attribute_name(:tweet_id) %>:</strong></dt>
+  <dt><strong><%= sentiment_icon(@tweet) %> <%= model_class.human_attribute_name(:tweet_id) %>:</strong></dt>
   <dd><%= @tweet.tweet_id %></dd>
   <dt><strong><%= model_class.human_attribute_name(:from_user) %>:</strong></dt>
-  <dd><%= @tweet.from_user %></dd>
+  <dd><%= @tweet.twitter_user.handle %></dd>
   <dt><strong><%= model_class.human_attribute_name(:text) %>:</strong></dt>
   <dd><%= @tweet.text %></dd>
 </dl>
+
+<div id="chart"></div>
+<div id="sig" class="span9" style="height:300px;position:relative; background:#ccc"></div>
+<script type="text/javascript">
+
+$(document).ready(function() {
+  var sigRoot = document.getElementById('sig');
+  var sigInst = sigma.init(sigRoot);
+  sigInst.drawingProperties({
+    defaultLabelColor: '#ccc',
+    font: 'Arial',
+    edgeColor: '#000',
+    defaultEdgeType: 'curve'
+  }).graphProperties({
+    minNodeSize: 6,
+    maxNodeSize: 10
+  });
+  sigInst.addNode('hello',{
+    label: 'Hello',
+    color: 'red'
+  }).addNode('world',{
+    label: 'World !',
+    color: '#00ff00'
+  }).addEdge('hello_world','hello','world').draw();
+  
+})
+
+</script>

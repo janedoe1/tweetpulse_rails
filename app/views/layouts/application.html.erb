@@ -67,7 +67,7 @@
                     <ul class="dropdown-menu" style="min-width:200px;">
                       <li style="margin-left:10px;"><%= current_user.email %></li>
                       <li class="divider"></li>
-                      <li><%= link_to raw("<i class='icon-pencil'></i> Manage Terms"), terms_path %></li>
+                      <li><%= link_to raw("<i class='icon-pencil'></i> Manage Searches"), searches_path %></li>
                       <li><%= link_to raw("<i class='icon-cog'></i>  Edit Settings"), edit_user_registration_path %></li>
                       <li><%= link_to raw("<i class='icon-share-alt'></i> Sign Out"), destroy_user_session_path, :method => 'delete' %></li>
                     </ul>
@@ -76,7 +76,7 @@
               </ul>
               <ul class="nav">
                 <li><%= link_to raw("<i class='icon-th-large icon-white'></i> Dashboard"), "/dashboard"  %></li>
-                <li><%= link_to raw("<i class='icon-plus-sign icon-white'></i> Add Term"), new_term_path  %></li>
+                <li><%= link_to raw("<i class='icon-plus-sign icon-white'></i> Add Search"), new_search_path  %></li>
               </ul>
             <% end %>
           </div><!--/.nav-collapse -->
@@ -89,27 +89,16 @@
           <% if user_signed_in? %>
             <div class="span3">
               <div class="sidebar-nav" style="min-height:200px;margin-top:22px;">
-                <h5>Tracking Terms</h5>
                 <ul class="well nav nav-list">
-                  <small><%= "You aren't tracking anything" if current_user.terms.blank? %></small>
-                  <% unless current_user.terms.keyword_terms.count == 0 %>
-                    <li class="nav-header">Keywords</li>
-                      <% current_user.terms.keyword_terms.each do |term| %>
-                        <li><%= link_to term.text, term_path(term) %></li>
+                  <li class="nav-header">Your Searches</li>
+                  <% unless current_user.searches.count == 0 %>
+                      <% current_user.searches.each do |search| %>
+                        <li><%= link_to search.label, search_path(search) %></li>
                       <% end %>
+                  <% else %>
+                    <li><small><%= "You aren't tracking anything" if current_user.searches.blank? %></small></li>
                   <% end %>
-                  <% unless current_user.terms.hashtag_terms.count == 0 %>
-                    <li class="nav-header">Hashtags</li>
-                      <% current_user.terms.hashtag_terms.each do |term| %>
-                        <li><%= link_to term, term_path(term) %></li>
-                      <% end %>
-                  <% end %>
-                  <% unless current_user.terms.user_terms.count == 0 %>
-                    <li class="nav-header">Users</li>
-                      <% current_user.terms.user_terms.each do |term| %>
-                        <li><%= link_to term, term_path(term) %></li>
-                      <% end %>
-                  <% end %>
+                 
                 </ul><!--/.well -->
               </div><!--/.sidebar -->
             </div><!--/span-->

@@ -13,13 +13,20 @@
         <div class="img-polaroid span5">
           <%= image_tag current_user.twitter_auth.profile_image_url, :class => "img-polaroid pull-left", :style => 'margin:8px 0 0 5px;'%>
           <div class="caption span4 pull-right">
-            <p style="padding-top:5px;">Authorized as <%= link_to "@#{current_user.authentications.first.username}", twitter_user_page(current_user.twitter_auth.username) %></p>
-            <%= button_to "Deauthorize", authentication_path(current_user.twitter_auth), :method => :delete, :class => 'btn-danger' %>
+            <p style="padding-top:5px;font-size:1.1em;">
+              <%= image_tag "https://twitter.com/images/resources/twitter-bird-light-bgs.png", :width => 30 %> Authorized as <%= link_to "@#{current_user.authentications.first.username}", twitter_user_page(current_user.twitter_auth.username) %></p>
+            <%= button_to "Deauthorize", authentication_path(current_user.twitter_auth), :method => :delete, :class => 'btn', :style => 'padding:5px 10px; border-radius:3px;' %>
           </div>
         </div>
-       
       <% else %>
-        <%= link_to raw("<img src='https://dev.twitter.com/sites/default/files/images_documentation/sign-in-with-twitter-gray.png' />"), twitter_auth_path %>
+        <div class="img-polaroid span5">
+          <%= image_tag "https://twitter.com/images/resources/twitter-bird-light-bgs.png", :width => 30, :class => "img-polaroid pull-left" %>
+          <div class="caption span4 pull-right">
+            <p style="padding-top:5px;font-size:1.1em;">
+              You have not authorized a Twitter account yet.</p>
+            <%= link_to raw("<img src='https://dev.twitter.com/sites/default/files/images_documentation/sign-in-with-twitter-gray.png' />"), twitter_auth_path %>
+          </div>
+        </div>
       <% end %>
     </div>
     <div class="tab-pane" id="tab2">

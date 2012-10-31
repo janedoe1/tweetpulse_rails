@@ -21,11 +21,8 @@ class TermsController < ApplicationController
   # GET /terms/new
   # GET /terms/new.json
   def new
-    @term = Term.new
-    respond_to do |format|
-      format.html # new.html.erb
-      format.json { render json: @term }
-    end
+    @search = Search.new
+    3.times {@search.terms.build}
   end
 
   # GET /terms/1/edit
@@ -36,6 +33,7 @@ class TermsController < ApplicationController
   # POST /terms
   # POST /terms.json
   def create
+    raise
     @term = current_user.terms.new(params[:term])
 
     respond_to do |format|
@@ -77,11 +75,11 @@ class TermsController < ApplicationController
     end
   end
   
-  def refresh_results
-    @term = current_user.terms.find(params[:term_id])
-    @term.tweets.destroy_all
-    @term.get_tweets
-    redirect_to term_path(@term)
-  end
+  # def refresh_results
+  #   @term = current_user.terms.find(params[:term_id])
+  #   @term.tweets.destroy_all
+  #   @term.get_tweets
+  #   redirect_to term_path(@term)
+  # end
   
 end
