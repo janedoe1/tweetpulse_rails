@@ -3,40 +3,169 @@
   <h4><%= "Tweets matching search '#{@search.label}'" %><small class="pull-right" style="padding-top:3px;"><i class='icon-refresh'></i> <%= link_to "Refresh results", refresh_search_results_path(@search.id) %></small></h4>
 </div>
 
+<style type="text/css">
+
+circle.node {
+  cursor: pointer;
+  stroke: #000;
+  stroke-width: .5px;
+}
+
+line.link {
+  fill: none;
+  stroke: #9ecae1;
+  stroke-width: 1.5px;
+}
+circle.node title {
+  pointer-events: none;
+  font: 10px sans-serif;
+}
+
+circle.node:hover {
+  color:red;
+}
+    </style>
+  </head>
+  <body>
+    <div id="chart" style="width:100%; height:550px;background:#F5F5F5;border:1px solid #e3e3e3;border-radius:3px;"></div>
+    <script type="text/javascript">
+//$(document).ready(function() {
+  var width = $('#chart').width(),
+      height = $('#chart').height();
+      
+  var color = d3.scale.category20();
+
+  var force = d3.layout.force()
+      .charge(-120)
+      .linkDistance(200)
+      .size([width, height]);
+
+  var svg = d3.select("#chart").append("svg")
+      .attr("width", width)
+      .attr("height", height);
   
+  url = "/searches/" + <%= @search.id.to_s %> + ".json"
+  
+  console.log(url);
+  d3.json(url, function(json) {
+    force
+        .nodes(json.nodes)
+        .links(json.links)
+        .start();
 
-<dl class="dl-horizontal">
-  <% if @tweets %>
-    <% @tweets.each do |tweet| %>
-      <dt><strong><%= tweet.twitter_user.handle %>:</strong></dt>
-      <dd><%= link_to tweet.text, tweet_path(tweet) %></dd>
-    <% end %>
-  <% end %>
-</dl>
-<div id="sig" class="span9" style="height:800px;position:relative; background:#ccc"></div>
+    var link = svg.selectAll("line.link")
+        .data(json.links)
+      .enter().append("line")
+        .attr("class", "link")
+        .style("stroke-width", 20);
 
-<script type="text/javascript">
+    var node = svg.selectAll("circle.node")
+        .data(json.nodes)
+      .enter().append("circle")
+        .attr("class", "node")
+        .attr("r", 20)
+        .attr("title", function(d) { return d.name; })
+        .attr("tweet_id", function(d) { return d.tweet_id; })
+        .style("fill", function(d) { return color(d.group); })
+        .call(force.drag);
 
-$(document).ready(function(){
-  var sigRoot = document.getElementById('sig');
-  var sigInst = sigma.init(sigRoot);
-  sigInst.drawingProperties({
-    defaultLabelColor: '#ccc',
-    font: 'Arial',
-    edgeColor: '#000',
-    defaultEdgeType: 'curve'
-  }).graphProperties({
-    minNodeSize: 6,
-    maxNodeSize: 10
+    node.append("text")
+              .attr("dx", 12)
+              .attr("dy", ".35em")
+              .text(function(d) { return d.name });
+    node.append("title")
+            .text(function(d) { return d.name; });
+    node.append("svg:text")
+                  .attr("class", "nodetext")
+                  .attr("dx", 15)
+                  .attr("dy", 5)
+                  .text(function(d) { return d.name });
+    console.log($("svg .node"));
+    
+    $("svg .node").qtip({
+       content: {
+             text: '<img src="/assets/loading.gif" alt="Loading..."/>',
+             url: 'http://localhost:3000/tweets/84/tooltip',
+             method: 'get',
+             title: {
+               text: 'Tweet details', // Give the tooltip a title using each elements text
+               button: 'Close' // Show a close link in the title
+             }
+       },
+       position: {
+          corner: {
+             target: 'topRight',
+             tooltip: 'bottomLeft'
+          }
+       },
+       show: { 
+         when: 'click',
+         solo: true // Only show one tooltip at a time
+       },
+       hide: 'unfocus',
+       style: { 
+             tip: true,
+             width: 200,
+             padding: 5,
+             color: '#333',
+             textAlign: 'left',
+             border: {
+                radius: 3,
+             },
+             name: 'blue', // Inherit the rest of the attributes from the preset dark style
+             width: 400
+       }
+    });
+
+    
+    // $("svg .node").poshytip({
+    //  className: 'tip-twitter',
+    //  showTimeout: 1,
+    //  alignTo: 'target',
+    //  alignX: 'right',
+    //  offsetX: 50,
+    //  offsetY: -30,
+    //  allowTipHover: true,
+    //  fade: false,
+    //  slide: false
+    //  //content: $(this).children('title').text()
+    // });
+    
+    // $("svg .node").tipTip({
+    //   edgeOffset: 5,
+    //   defaultPosition: "top",
+    //   content: "tweet"
+    // });
+    
+    // $("svg .node").tipsy({ 
+    //       gravity: 'sw', 
+    //       html: true,
+    //       offset: 200,
+    //       title: function() {
+            // var pos = $(this).offset();
+            //             console.log(pos);
+            //             var d = this.__data__;
+            //             var name = d.name;
+            //             var tweet = $(this).children('title').text();
+            //console.log(tweet);
+    //         return '@' + name + ': ' + tweet; 
+    //       }
+    //     });
+    // 
+    
+    force.on("tick", function() {
+      link.attr("x1", function(d) { return d.source.x; })
+          .attr("y1", function(d) { return d.source.y; })
+          .attr("x2", function(d) { return d.target.x; })
+          .attr("y2", function(d) { return d.target.y; });
+
+      node.attr("cx", function(d) { return d.x; })
+          .attr("cy", function(d) { return d.y; });
+    });
+    
   });
-  sigInst.addNode('0',{label: <%= "\'"+@search.label+"\'" %>, color: 'red'});
-  <% @search.tweets.each_with_index do |tweet, index| %>
-    sigInst.addNode(<%= "\'"+tweet.tweet_id+"\'" %>,{label: <%= "\'"+tweet.twitter_user.handle+"\'" %>, color: 'green', position: {x:'20', y: '30', z:'0'}, size: '100'});
-  <% end %>
-  <% @search.tweets.each_with_index do |tweet, index| %>
-    sigInst.addEdge(<%= "\'"+tweet.tweet_id+"\'" %>,'0',<%= "\'"+tweet.tweet_id+"\'" %>);
-  <% end %>
-  sigInst.draw();
-})
 
-</script>
+//})
+
+
+    </script>

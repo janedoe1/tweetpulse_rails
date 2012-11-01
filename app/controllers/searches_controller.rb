@@ -23,7 +23,7 @@ class SearchesController < ApplicationController
     end
     respond_to do |format|
       format.html # new.html.erb
-      format.gexf { render @search.gexf }
+      format.json { render json: @search.to_json }
     end
   end
 

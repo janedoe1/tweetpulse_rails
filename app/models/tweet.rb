@@ -13,4 +13,9 @@ class Tweet < ActiveRecord::Base
      :friends_count    => tweet.user.friends_count,
      :retweets         => current_user.twitter.retweets(self.tweet_id)}
   end
+  
+  def to_json
+    
+  end
+  
 end

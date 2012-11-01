@@ -12,9 +12,9 @@
 //
 //= require jquery
 //= require jquery_ujs
+//= require jquery.qtip
 //= require twitter/bootstrap
-//= require d3
-//= require d3.layout
+//= require d3.v2
 //= require sigma.min
 //= require sigma.parseGexf
 //= require sigma.forceatlas2

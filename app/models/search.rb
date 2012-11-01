@@ -74,7 +74,7 @@ class Search < ActiveRecord::Base
     g = "51"
     r="255"
     @tweets = self.tweets
-    xml = ::Builder::XmlMarkup.new()
+    xml = ::Builder::XmlMarkup.new(:indent => 2)
     xml.instruct! :xml
     xml.gexf 'xmlns' => "http://www.gephi.org/gexf", 'xmlns:viz' => "http://www.gephi.org/gexf/viz"  do
       xml.graph 'defaultedgetype' => "directed", 'idtype' => "string", 'type' => "static" do
@@ -95,6 +95,15 @@ class Search < ActiveRecord::Base
         end
       end
     end
+  end
+  
+  def to_json
+    data = {:nodes => [], :links => []}
+    data[:nodes].push({:name => self.label, :group => 0})
+    self.tweets.map {|tweet| data[:nodes].push({:name => tweet.twitter_user.handle, :group => 1, :tweet_id => tweet.id})}
+    self.tweets.map.with_index {|tweet, index| data[:links].push({:source => 0, :target => index, :value => index})}
+    data.to_json
+    #HTTParty.get("http://bost.ocks.org/mike/miserables/miserables.json", :headers => {'Content-Type' => 'application/json'}).parsed_response
   end
   
   def normalize(x,xmin,xmax,ymin,ymax)

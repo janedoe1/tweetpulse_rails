@@ -1,4 +1,8 @@
 class TweetsController < ApplicationController
+  
+  layout 'application', :except => [:show_tooltip]
+  
+  
   # GET /tweets
   # GET /tweets.json
   def index
@@ -18,7 +22,7 @@ class TweetsController < ApplicationController
       @data = @tweet.get_data(current_user)
     rescue Twitter::Error::TooManyRequests
       flash[:error] = "You have exceeded Twitter's API request limit. Please try again in 15 minutes."
-      redirect_to term_path(@tweet.term.id)
+      redirect_to search_path(@tweet.search)
     end
     #raise @data.inspect
     data = "[{'name':'flare.analytics.cluster.AgglomerativeCluster','size':3938,'imports':['flare.animate.Transitioner','flare.vis.data.DataList','flare.util.math.IMatrix','flare.analytics.cluster.MergeEdge','flare.analytics.cluster.HierarchicalCluster','flare.vis.data.Data']}]"
@@ -83,5 +87,11 @@ class TweetsController < ApplicationController
       format.html { redirect_to tweets_url }
       format.json { head :no_content }
     end
+  end
+  
+  def show_tooltip
+    @tweet = Tweet.find(params[:tweet_id])
+    render :partial => 'tweets/show_tooltip'
+    #render :layout => false
   end
 end

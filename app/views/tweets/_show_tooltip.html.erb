@@ -1,0 +1,11 @@
+<%= stylesheet_link_tag "application", :media => "all" %>
+<%- model_class = Tweet -%>
+
+<div style="border-bottom:1px solid #999">
+<h4><%= link_to "@#{@tweet.twitter_user.handle}", twitter_user_page(@tweet.twitter_user.handle)  %> 
+  <small><%= @tweet.twitter_user.follower_count %> followers,</small>
+  <small><%= @tweet.twitter_user.friend_count %> friends</small>
+</h4>
+</div>
+<small><%= tweet_date(@tweet.tweeted_at) %></small>
+<p style="margin-top:5px;"><%= @tweet.text %></p>

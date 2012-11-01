@@ -9,7 +9,6 @@ module TweetsHelper
     else
       icon = "<i class='icon-asterisk'></i>"
     end
-    
     raw(icon)
   end
 
