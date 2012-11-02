@@ -5,14 +5,25 @@ class Search < ActiveRecord::Base
   has_many :tweets
   
   accepts_nested_attributes_for :terms, :reject_if => lambda { |a| a[:text].blank? }
+    
+  # def autosave_associated_records_for_terms
+  #   i = 0
+  #   terms.each do |term|
+  #     t = term.type.constantize.find_or_create_by_text(term.text)
+  #     self.terms.push(t)
+  #     Rails.logger.info("iteration number #{i}")
+  #     i += 1
+  #   end
+  # end
   
   def get_tweets
     # search twitter using associated terms
-    self.user.twitter.search(self.search_query, :count => 5).results.map do |status|
+    self.user.twitter.search(self.search_query, :count => 20).results.map do |status|
       t = TwitterUser.create(:user_id        => status.user.id,
                              :handle         => status.from_user,
                              :follower_count => status.user.followers_count,
-                             :friend_count  => status.user.friends_count)
+                             :friend_count   => status.user.friends_count,
+                             :location       => status.user.location)
       reply_count = status.reply_count.nil? ? 0 : status.reply_count
       tweet = self.tweets.create(:tweet_id => status.id,
                                  :text => status.text,
@@ -99,16 +110,50 @@ class Search < ActiveRecord::Base
   
   def to_json
     data = {:nodes => [], :links => []}
-    data[:nodes].push({:name => self.label, :group => 0})
-    self.tweets.map {|tweet| data[:nodes].push({:name => tweet.twitter_user.handle, :group => 1, :tweet_id => tweet.id})}
-    self.tweets.map.with_index {|tweet, index| data[:links].push({:source => 0, :target => index, :value => index})}
+    # set root node
+    data[:nodes].push({:name => self.label, :size => normalize(max_node_size), :color => 'white'}) 
+    self.tweets.map {|tweet| data[:nodes].push({:name => "@" + tweet.twitter_user.handle, :size => normalize(tweet.twitter_user.follower_count), :color => sentiment_color(tweet), :tweet_tooltip => Rails.application.routes.url_helpers.tweet_tooltip_path(tweet)})}
+    self.tweets.map.with_index {|tweet, index| data[:links].push({:source => 0, :target => index+1, :value => index, :size => 1})}
+    Rails.logger.info data
     data.to_json
-    #HTTParty.get("http://bost.ocks.org/mike/miserables/miserables.json", :headers => {'Content-Type' => 'application/json'}).parsed_response
   end
   
-  def normalize(x,xmin,xmax,ymin,ymax)
+  def sentiment_color tweet
+    case tweet.sentiment.label
+    when 'pos'
+      'green'
+    when 'neg'
+      'red'
+    else
+      'gray'
+    end
+  end
+  
+  def normalize val
+    unless min_node_size == max_node_size
+      xmin = min_node_size
+      xmax = max_node_size
+      norm_min = 10
+      norm_max = 30
       xrange = xmax-xmin
-      yrange = ymax-ymin
-      ymin + (x-xmin) * (yrange.to_f / xrange) 
-  end  
+      norm_range = norm_max-norm_min
+      (val-xmin).to_f * (norm_max.to_f - norm_min.to_f) / (xmax.to_f - xmin.to_f) + norm_min
+    else
+      10
+    end
+    #y = 1 + (x-A)*(10-1)/(B-A)
+    #norm_min + (val-xmin) * (norm_range.to_f / xrange)
+  end
+  
+  def user_node_size
+    self.tweets.first.twitter_user.follower_count
+  end
+  
+  def min_node_size
+    self.tweets.map {|t| t.twitter_user.follower_count}.min
+  end
+  
+  def max_node_size
+    self.tweets.map {|t| t.twitter_user.follower_count}.max
+  end
 end

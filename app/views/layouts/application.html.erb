@@ -61,6 +61,7 @@
                 <li class="divider-vertical"></li>
                 <li class="dropdown">
                 <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                  <span style="padding-right:5px;"><%= current_user.name %></span>
                   <%= raw("<i class='icon-user icon-white'></i>") unless current_user.twitter_auth %> 
                   <%= image_tag current_user.twitter_auth.profile_image_url, :height => "25", :width => '25' if current_user.twitter_auth %>
                   <span class="caret"></span></a>
@@ -93,7 +94,7 @@
                   <li class="nav-header">Your Searches</li>
                   <% unless current_user.searches.count == 0 %>
                       <% current_user.searches.each do |search| %>
-                        <li><%= link_to search.label, search_path(search) %></li>
+                        <li class='search-item'><%= link_to search.label, search_path(search) %></li>
                       <% end %>
                   <% else %>
                     <li><small><%= "You aren't tracking anything" if current_user.searches.blank? %></small></li>
@@ -128,6 +129,16 @@
 
 <script type="text/javascript" language="javascript" >
     $(document).ready(function () {
-          $('.dropdown-toggle').dropdown();
+          // $(".search-item").hover(
+          //             function () {
+          //               $(this).children('span').show();
+          //             },
+          //             function () {
+          //               $(this).children('span').hide();
+          //             }
+          //           );
+          //           $(".search-item").click(function(){
+          //             return confirm('Are you sure you want to delete this search?')
+          //           })
     }); 
  </script>

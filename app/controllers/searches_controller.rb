@@ -91,7 +91,13 @@ class SearchesController < ApplicationController
   def refresh_results
     @search = current_user.searches.find(params[:search_id])
     @search.tweets.destroy_all
-    @search.get_tweets
+    begin
+      @search.get_tweets
+    rescue Twitter::Error::InternalServerError => e
+      puts e
+      Rails.logger.info e.message
+      flash[:error] = 'Twitter is not responding. Please try again in a few minutes.'
+    end
     redirect_to search_path(@search)
   end
   

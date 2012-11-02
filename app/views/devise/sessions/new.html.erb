@@ -4,18 +4,18 @@
     <div class="img-polaroid span12">
       <img src="http://2.bp.blogspot.com/-ByoqVwtwKnU/TyqgNLXF0hI/AAAAAAAAAM0/zHGDBMrU-ig/s1600/passing-notes.jpg" alt="">
       <div class="caption span12">
-        <p style="padding-top:10px;">Track the speed and path of tweets with ease.</p>
+        <p style="padding-top:10px;">Visualize the speed and path of tweets with ease.</p>
       </div>
     </div>
   </div>
   <div class="row-fluid">
-    <h6><span style="font-size:15px;" class="label label-important"><%= Term.count %></span> terms tracked so far!</h6>
+    <h6><span style="font-size:15px;" class="label label-important"><%= Search.count %></span> searches tracking so far!</h6>
   </div>
 </div>
 
 <div class="span6 pull-right">
   <div class="well">
-  <legend><span class="brand" style="font-size:1.5em;">TweetPulse &nbsp;</span><small>Social propagation monitoring</small></legend>
+  <legend><span class="brand" style="font-size:1.5em;">TweetPulse &nbsp;</span><small>Twitter propagation visualization</small></legend>
   <%= simple_form_for(resource, :as => resource_name, :url => session_path(resource_name), :html => { :class => 'form-horizontal' }) do |f| %>
     <div class="form-inputs">
       <%= f.input :email, :required => false, :autofocus => true %>
@@ -26,7 +26,8 @@
       <%= f.button :submit, "Sign in",:class => 'btn-primary' %>
     </div>
   <% end %>
-  </div>
   <%= render "devise/shared/links" %>
+  </div>
+  
   
 </div>

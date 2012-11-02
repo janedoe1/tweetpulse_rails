@@ -24,10 +24,26 @@ circle.node title {
 circle.node:hover {
   color:red;
 }
+
+text {
+  font: 12px sans-serif;
+  pointer-events: none;
+  letter-spacing:1px;
+}
+
+text.shadow {
+  stroke: #000;
+  stroke-width: 3px;
+  stroke-opacity: 1;
+}
     </style>
   </head>
   <body>
-    <div id="chart" style="width:100%; height:550px;background:#F5F5F5;border:1px solid #e3e3e3;border-radius:3px;"></div>
+    <% unless @search.tweets.blank? %>
+      <div id="chart" style="width:100%; height:550px;background:#252525;border:1px solid #999;border-radius:5px;"></div>
+    <% else %>
+      There are no tweets matching this search.
+    <% end %>
     <script type="text/javascript">
 //$(document).ready(function() {
   var width = $('#chart').width(),
@@ -48,6 +64,7 @@ circle.node:hover {
   
   console.log(url);
   d3.json(url, function(json) {
+    var nodes = json.nodes
     force
         .nodes(json.nodes)
         .links(json.links)
@@ -55,105 +72,42 @@ circle.node:hover {
 
     var link = svg.selectAll("line.link")
         .data(json.links)
-      .enter().append("line")
+        .enter().append("line")
         .attr("class", "link")
-        .style("stroke-width", 20);
+        .style("stroke-width", function(d) { return d.size; })
+        .style("stroke", 'white');
 
     var node = svg.selectAll("circle.node")
         .data(json.nodes)
-      .enter().append("circle")
+        .enter().append("circle")
         .attr("class", "node")
-        .attr("r", 20)
+        .attr("r", function(d) { return d.size; })
         .attr("title", function(d) { return d.name; })
-        .attr("tweet_id", function(d) { return d.tweet_id; })
-        .style("fill", function(d) { return color(d.group); })
+        .attr("detail", function(d) { return d.tweet_tooltip; })
+        .attr("color", function(d) { return d.color; })
+        .style("fill", function(d) { return d.color; })
         .call(force.drag);
 
-    node.append("text")
-              .attr("dx", 12)
-              .attr("dy", ".35em")
-              .text(function(d) { return d.name });
-    node.append("title")
-            .text(function(d) { return d.name; });
-    node.append("svg:text")
-                  .attr("class", "nodetext")
-                  .attr("dx", 15)
-                  .attr("dy", 5)
-                  .text(function(d) { return d.name });
-    console.log($("svg .node"));
-    
-    $("svg .node").qtip({
-       content: {
-             text: '<img src="/assets/loading.gif" alt="Loading..."/>',
-             url: 'http://localhost:3000/tweets/84/tooltip',
-             method: 'get',
-             title: {
-               text: 'Tweet details', // Give the tooltip a title using each elements text
-               button: 'Close' // Show a close link in the title
-             }
-       },
-       position: {
-          corner: {
-             target: 'topRight',
-             tooltip: 'bottomLeft'
-          }
-       },
-       show: { 
-         when: 'click',
-         solo: true // Only show one tooltip at a time
-       },
-       hide: 'unfocus',
-       style: { 
-             tip: true,
-             width: 200,
-             padding: 5,
-             color: '#333',
-             textAlign: 'left',
-             border: {
-                radius: 3,
-             },
-             name: 'blue', // Inherit the rest of the attributes from the preset dark style
-             width: 400
-       }
-    });
+    var text = svg.append("svg:g").selectAll("g")
+        .data(force.nodes())
+        .enter().append("svg:g");
 
-    
-    // $("svg .node").poshytip({
-    //  className: 'tip-twitter',
-    //  showTimeout: 1,
-    //  alignTo: 'target',
-    //  alignX: 'right',
-    //  offsetX: 50,
-    //  offsetY: -30,
-    //  allowTipHover: true,
-    //  fade: false,
-    //  slide: false
-    //  //content: $(this).children('title').text()
-    // });
-    
-    // $("svg .node").tipTip({
-    //   edgeOffset: 5,
-    //   defaultPosition: "top",
-    //   content: "tweet"
-    // });
-    
-    // $("svg .node").tipsy({ 
-    //       gravity: 'sw', 
-    //       html: true,
-    //       offset: 200,
-    //       title: function() {
-            // var pos = $(this).offset();
-            //             console.log(pos);
-            //             var d = this.__data__;
-            //             var name = d.name;
-            //             var tweet = $(this).children('title').text();
-            //console.log(tweet);
-    //         return '@' + name + ': ' + tweet; 
-    //       }
-    //     });
-    // 
-    
+    // A copy of the text with a thick white stroke for legibility.
+    text.append("svg:text")
+        .attr("x", function(d) { return d.size; })
+        .attr("y", ".31em")
+        .attr("class", "shadow")
+        .text(function(d) { return d.name; });
+
+    text.append("svg:text")
+        .attr("x", function(d) { return d.size; })
+        .attr("y", ".31em")
+        .style("fill", 'white')
+        .text(function(d) { return d.name; });
+        
     force.on("tick", function() {
+      nodes[0].x = width / 2;
+      nodes[0].y = height / 2;
       link.attr("x1", function(d) { return d.source.x; })
           .attr("y1", function(d) { return d.source.y; })
           .attr("x2", function(d) { return d.target.x; })
@@ -161,7 +115,56 @@ circle.node:hover {
 
       node.attr("cx", function(d) { return d.x; })
           .attr("cy", function(d) { return d.y; });
+          
+      text.attr("transform", function(d) {
+          return "translate(" + d.x + "," + d.y + ")";
+      });
     });
+    
+    $("svg .node").each(function(index) {
+      if (index != 0) {
+        $(this).qtip({
+           content: {
+                 text: '<img src="/assets/loading.gif" alt="Loading..."/>',
+                 url: $(this).attr('detail'),
+                 method: 'get'
+                 // title: {
+                 //                   text: $(this).attr('title'), // Give the tooltip a title using each elements text
+                 //                   button: 'Close' // Show a close link in the title
+                 //                 }
+           },
+           position: {
+              corner: {
+                 target: 'topLeft',
+                 tooltip: 'bottomLeft'
+              },
+              adjust: {
+                screen: true,
+                x: $(this).attr('size')
+              }
+           },
+           show: { 
+             when: 'click',
+             solo: true // Only show one tooltip at a time
+           },
+           hide: 'unfocus',
+           style: { 
+                 tip: true,
+                 padding: 5,
+                 color: '#333',
+                 textAlign: 'left',
+                 border: {
+                    radius: 5,
+                    color: $(this).attr('color')
+                 },
+                 name: 'light', // Inherit the rest of the attributes from the preset dark style
+                 width: 500
+           }
+        });
+      }
+      
+    })
+    
     
   });
 

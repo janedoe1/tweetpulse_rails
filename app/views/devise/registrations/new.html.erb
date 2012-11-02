@@ -1,38 +1,36 @@
+<div class="span7">
+  <div class="well">
+    <legend>Tell us about yourself</legend>
+    <div class="row-fluid">
+      <%= simple_form_for(resource, :as => resource_name, :url => registration_path(resource_name), :html => { :class => 'form-horizontal' }) do |f| %>
+        <%= f.error_notification %>
 
-<div class="well span7">
-  <legend>Tell us about yourself</legend>
-  <div class="row-fluid span12">
-    <%= simple_form_for(resource, :as => resource_name, :url => registration_path(resource_name), :html => { :class => 'form-horizontal' }) do |f| %>
-      <%= f.error_notification %>
+        <div class="form-inputs">
+          <%= f.input :first_name, :required => true, :autofocus => true %>
+          <%= f.input :last_name, :required => true %>
+          <%= f.input :email, :required => true %>
+          <%= f.input :password, :required => true %>
+          <%= f.input :password_confirmation, :required => true %>
+        </div>
 
-      <div class="form-inputs">
-        <%= f.input :email, :required => true, :autofocus => true %>
-        <%= f.input :password, :required => true %>
-        <%= f.input :password_confirmation, :required => true %>
-      </div>
-
-      <div class="form-actions">
-        <%= f.button :submit, "Sign up", :class => 'btn-primary' %>
-      </div>
-    <% end %>
+        <div class="form-actions">
+          <%= f.button :submit, "Sign up", :class => 'btn-primary' %>
+        </div>
+      <% end %>
+    </div>
+    <%= render "devise/shared/links" %>  
   </div>
-  
 </div>
 
 <div class="span4 pull-right">
   <div class="row-fluid" style="margin-bottom:20px;">
     <div class="img-polaroid span10">
-      <%= image_tag "http://2.bp.blogspot.com/-ByoqVwtwKnU/TyqgNLXF0hI/AAAAAAAAAM0/zHGDBMrU-ig/s1600/passing-notes.jpg" %>
+      <%= image_tag "/assets/pass_notes_1.jpg" %>
     </div>
   </div>
   <div class="row-fluid" style="margin-bottom:20px;">
     <div class="img-polaroid span10">
-      <%= image_tag "http://2.bp.blogspot.com/-ByoqVwtwKnU/TyqgNLXF0hI/AAAAAAAAAM0/zHGDBMrU-ig/s1600/passing-notes.jpg" %>
-    </div>      
-  </div>
-  <div class="row-fluid" style="margin-bottom:20px;">
-    <div class="img-polaroid span10">
-      <%= image_tag "http://2.bp.blogspot.com/-ByoqVwtwKnU/TyqgNLXF0hI/AAAAAAAAAM0/zHGDBMrU-ig/s1600/passing-notes.jpg" %>
+      <%= image_tag "/assets/pass_notes_3.png" %>
     </div>
   </div>
 </div>
