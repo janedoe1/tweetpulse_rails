@@ -77,7 +77,7 @@ text.shadow {
         .enter().append("line")
         .attr("class", "link")
         .style("stroke-width", function(d) { return d.size; })
-        .style("stroke", 'white');
+        .style("stroke", 'black');
 
     var node = svg.selectAll("circle.node")
         .data(json.nodes)

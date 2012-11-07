@@ -5,7 +5,7 @@
 <h4><%= link_to "@#{@tweet.twitter_user.handle}", twitter_user_page(@tweet.twitter_user.handle)  %> 
   <small><%= number_with_delimiter(@tweet.twitter_user.follower_count, :delimiter => ',') %> followers,</small>
   <small><%= number_with_delimiter(@tweet.twitter_user.friend_count, :delimiter => ',') %> following</small>
-  <small class="pull-right" style="margin-top:5px;"><%#= link_to 'View retweets', tweet_path(@tweet) %></small>
+  <small class="pull-right" style="margin-top:5px;"><%= link_to 'View retweets', tweet_path(@tweet) %></small>
 </h4>
 </div>
 <small><%= tweet_date(@tweet.tweeted_at) %></small>

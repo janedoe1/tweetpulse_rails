@@ -1,41 +1,172 @@
 <%- model_class = Tweet -%>
-<div class="page-header">
-  <h4>Tweet from <%= link_to @tweet.twitter_user.handle, twitter_user_page(@tweet.twitter_user.handle) %> matching <%= "'#{@tweet.search.label}'" %><small class="pull-right" style="padding-top:3px;"><i class='icon-refresh'></i> <%= link_to "Refresh results", refresh_search_results_path(@tweet.id) %></small></h4>
-</div>
+<%= databox("Tweet from @#{@tweet.twitter_user.handle} matching '#{@tweet.search.label}'") do %>
 
-<dl class="dl-horizontal">
-  <dt><strong><%= sentiment_icon(@tweet) %> <%= model_class.human_attribute_name(:tweet_id) %>:</strong></dt>
-  <dd><%= @tweet.tweet_id %></dd>
-  <dt><strong><%= model_class.human_attribute_name(:from_user) %>:</strong></dt>
-  <dd><%= @tweet.twitter_user.handle %></dd>
-  <dt><strong><%= model_class.human_attribute_name(:text) %>:</strong></dt>
-  <dd><%= @tweet.text %></dd>
-</dl>
+<div id="chart" style="width:100%; height:550px;"></div>
 
-<div id="chart"></div>
-<div id="sig" class="span9" style="height:300px;position:relative; background:#ccc"></div>
-<script type="text/javascript">
+<% end %>
 
-$(document).ready(function() {
-  var sigRoot = document.getElementById('sig');
-  var sigInst = sigma.init(sigRoot);
-  sigInst.drawingProperties({
-    defaultLabelColor: '#ccc',
-    font: 'Arial',
-    edgeColor: '#000',
-    defaultEdgeType: 'curve'
-  }).graphProperties({
-    minNodeSize: 6,
-    maxNodeSize: 10
-  });
-  sigInst.addNode('hello',{
-    label: 'Hello',
-    color: 'red'
-  }).addNode('world',{
-    label: 'World !',
-    color: '#00ff00'
-  }).addEdge('hello_world','hello','world').draw();
+<style type="text/css">
+
+circle.node {
+  cursor: pointer;
+  stroke: #000;
+  stroke-width: .5px;
+}
+
+line.link {
+  fill: none;
+  stroke: #9ecae1;
+  stroke-width: 1.5px;
+}
+circle.node title {
+  pointer-events: none;
+  font: 10px sans-serif;
+}
+
+circle.node:hover {
+  color:red;
+}
+
+text {
+  font: 12px sans-serif;
+  pointer-events: none;
+  letter-spacing:1px;
+}
+
+text.shadow {
+  stroke: #000;
+  stroke-width: 3px;
+  stroke-opacity: 1;
+}
+    </style>
+  </head>
+  <body>
+    
+    <script type="text/javascript">
+//$(document).ready(function() {
+  var width = $('#chart').width(),
+      height = $('#chart').height();
+      
+  var color = d3.scale.category20();
+
+  var force = d3.layout.force()
+      .charge(-120)
+      .linkDistance(200)
+      .size([width, height]);
+
+  var svg = d3.select("#chart").append("svg")
+      .attr("width", width)
+      .attr("height", height);
   
-})
+  url = "/tweets/" + <%= @tweet.id.to_s %> + ".json"
+  
+  console.log(url);
+  d3.json(url, function(json) {
+    var nodes = json.nodes
+    force
+        .nodes(json.nodes)
+        .links(json.links)
+        .start();
 
-</script>
+    var link = svg.selectAll("line.link")
+        .data(json.links)
+        .enter().append("line")
+        .attr("class", "link")
+        .style("stroke-width", function(d) { return d.size; })
+        .style("stroke", 'black');
+
+    var node = svg.selectAll("circle.node")
+        .data(json.nodes)
+        .enter().append("circle")
+        .attr("class", "node")
+        .attr("r", function(d) { return d.size; })
+        .attr("title", function(d) { return d.name; })
+        .attr("detail", function(d) { return d.tweet_tooltip; })
+        .attr("color", function(d) { return d.color; })
+        .style("fill", function(d) { return d.color; })
+        .call(force.drag);
+
+    var text = svg.append("svg:g").selectAll("g")
+        .data(force.nodes())
+        .enter().append("svg:g");
+
+    // A copy of the text with a thick white stroke for legibility.
+    text.append("svg:text")
+        .attr("x", function(d) { return d.size; })
+        .attr("y", ".31em")
+        .attr("class", "shadow")
+        .text(function(d) { return d.name; });
+
+    text.append("svg:text")
+        .attr("x", function(d) { return d.size; })
+        .attr("y", ".31em")
+        .style("fill", 'white')
+        .text(function(d) { return d.name; });
+        
+    force.on("tick", function() {
+      nodes[0].x = width / 2;
+      nodes[0].y = height / 2;
+      link.attr("x1", function(d) { return d.source.x; })
+          .attr("y1", function(d) { return d.source.y; })
+          .attr("x2", function(d) { return d.target.x; })
+          .attr("y2", function(d) { return d.target.y; });
+
+      node.attr("cx", function(d) { return d.x; })
+          .attr("cy", function(d) { return d.y; });
+          
+      text.attr("transform", function(d) {
+          return "translate(" + d.x + "," + d.y + ")";
+      });
+    });
+    
+    $("svg .node").each(function(index) {
+      if (index != 0) {
+        $(this).qtip({
+           content: {
+                 text: '<img src="/assets/loading.gif" alt="Loading..."/>',
+                 url: $(this).attr('detail'),
+                 method: 'get'
+                 // title: {
+                 //                   text: $(this).attr('title'), // Give the tooltip a title using each elements text
+                 //                   button: 'Close' // Show a close link in the title
+                 //                 }
+           },
+           position: {
+              corner: {
+                 target: 'topLeft',
+                 tooltip: 'bottomLeft'
+              },
+              adjust: {
+                screen: true,
+                x: $(this).attr('size')
+              }
+           },
+           show: { 
+             when: 'click',
+             solo: true // Only show one tooltip at a time
+           },
+           hide: 'unfocus',
+           style: { 
+                 tip: true,
+                 padding: 5,
+                 color: '#333',
+                 textAlign: 'left',
+                 border: {
+                    radius: 5,
+                    color: $(this).attr('color')
+                 },
+                 name: 'light', // Inherit the rest of the attributes from the preset dark style
+                 width: 500
+           }
+        });
+      }
+      
+    })
+    
+    
+  });
+
+//})
+
+
+    </script>
