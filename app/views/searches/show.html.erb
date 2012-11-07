@@ -1,7 +1,13 @@
-<%- model_class = Search -%>
-<div class="page-header">
-  <h4><%= "Tweets matching search '#{@search.label}'" %><small class="pull-right" style="padding-top:3px;"><i class='icon-refresh'></i> <%= link_to "Refresh results", refresh_search_results_path(@search.id) %></small></h4>
-</div>
+<%= row do %>
+<%= databox("Tweets matching search '#{@search.label}'", :class => 'span12') do %>
+  <small class="pull-right" style="padding-top:3px;"><i class='icon-refresh'></i> <%= link_to "Refresh results", refresh_search_results_path(@search.id) %></small>
+  <% unless @search.tweets.blank? %>
+    <div id="chart" style="width:100%; height:550px;"></div>
+  <% else %>
+    There are no tweets matching this search.
+  <% end %>
+<% end %>
+<% end %>
 
 <style type="text/css">
 
@@ -39,11 +45,7 @@ text.shadow {
     </style>
   </head>
   <body>
-    <% unless @search.tweets.blank? %>
-      <div id="chart" style="width:100%; height:550px;background:#252525;border:1px solid #999;border-radius:5px;"></div>
-    <% else %>
-      There are no tweets matching this search.
-    <% end %>
+    
     <script type="text/javascript">
 //$(document).ready(function() {
   var width = $('#chart').width(),

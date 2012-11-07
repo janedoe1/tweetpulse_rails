@@ -5,6 +5,10 @@ class Tweet < ActiveRecord::Base
   belongs_to :twitter_user
   has_one :sentiment
   
+  scope :positive, includes(:sentiment).where("sentiment.label=?", "pos")
+  scope :negative, where(:is_enabled => true, :is_archived => false)
+  scope :neutral, where(:is_enabled => true, :is_archived => false)
+  
   def get_data current_user
     tweet = current_user.twitter.status(self.tweet_id, :include_entities => true)
     {:retweeters_count => tweet.retweeters_count,

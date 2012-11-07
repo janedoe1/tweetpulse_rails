@@ -4,7 +4,7 @@ class ApplicationController < ActionController::Base
   
   def check_twitter_auth
     unless !!current_user.authentications.find_by_provider('twitter')
-      flash[:error] = "You must authenticate with Twitter before tracking terms"
+      flash[:error] = "You must authenticate with Twitter before creating searches."
       redirect_to edit_user_registration_path
     end
   end

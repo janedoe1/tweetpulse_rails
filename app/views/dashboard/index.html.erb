@@ -1,6 +1,70 @@
-<% model_class = Search %>
 <div class="page-header">
   <h4>Dashboard</h4>
 </div>
 
-<h6><span style="font-size:15px;" class="label label-important"><%= @searches.count %></span> searches tracking</h6>
+<%= row do %>  
+  <%= databox("Sentiment Breakdown", :class => 'span6', :inner_style => 'padding:0;') do %>
+    <div id="sentiment-graph"></div>
+  <% end %>
+  <%= databox("Tweet Counts by Search", :class => 'span6', :inner_style => 'padding:0;') do %>
+  <div id="search-graph"></div>
+  <% end %>
+<% end %>
+
+<script type="text/javascript" src="https://www.google.com/jsapi"></script>
+<script type="text/javascript">
+
+  // Load the Visualization API and the piechart package.
+  google.load('visualization', '1.0', {'packages':['corechart']});
+  // Set a callback to run when the Google Visualization API is loaded.
+  google.setOnLoadCallback(drawChart);
+
+
+  // Callback that creates and populates a data table, 
+  // instantiates the pie chart, passes in the data and
+  // draws it.
+  function drawChart() {
+
+  // Create the data table(s).
+  var sentiment_chart_data = new google.visualization.DataTable();
+  sentiment_chart_data.addColumn('string', 'Sentiment');
+  sentiment_chart_data.addColumn('number', 'Number of Tweets');
+  sentiment_chart_data.addRows([
+    ['Positive', <%= @presenter.sentiment_tweet_count('pos') %>],
+    ['Negative', <%= @presenter.sentiment_tweet_count('neg') %>],
+    ['Neutral', <%= @presenter.sentiment_tweet_count('neutral') %>]
+  ]);
+  
+  var search_chart_data = google.visualization.arrayToDataTable([
+    ['Search', 'Number of Tweets'],
+    <%= raw(@presenter.search_tweet_counts * ",") %>
+    ]);
+  
+    // Create and draw the visualization.
+    new google.visualization.BarChart(document.getElementById('search-graph')).
+        draw(search_chart_data,
+             {width:$('#search-graph').width(),
+              legend: 'none',
+              fontName: 'Verdana',
+              backgroundColor: '#fcfcfc',
+              tooltip: {textStyle:{fontSize:9}},
+              vAxis: {title: 'Search'},
+              hAxis: {title: "Number of Tweets"}}
+        );
+  
+  // Set chart options
+  var sentiment_chart_options = {width:$('#sentiment-graph').width(),
+                 fontName: 'Verdana',
+                 backgroundColor: '#fcfcfc',
+                 colors: ['#008000', '#ff0000', '#808080'],
+                 legend: {position: 'right', alignment: 'center'},
+                 pieSliceTextStyle: {color: 'white'},
+                 is3D: true
+                 };
+  
+  var sentiment_chart = new google.visualization.PieChart(document.getElementById('sentiment-graph'));
+  sentiment_chart.draw(sentiment_chart_data, sentiment_chart_options);
+  
+  
+}
+</script>

@@ -18,7 +18,7 @@ class Search < ActiveRecord::Base
   
   def get_tweets
     # search twitter using associated terms
-    self.user.twitter.search(self.search_query, :count => 20).results.map do |status|
+    self.user.twitter.search(self.search_query, :count => 29).results.map do |status|
       t = TwitterUser.create(:user_id        => status.user.id,
                              :handle         => status.from_user,
                              :follower_count => status.user.followers_count,
@@ -66,46 +66,28 @@ class Search < ActiveRecord::Base
   
   def sentiment_api_url
     'http://text-processing.com/api/sentiment/'
+    #"http://www.sentiment140.com/api/classify?text="
   end
   
   def get_sentiment(text)
     HTTParty.post(sentiment_api_url, :body => "text=#{text}", :headers => {'Content-Type' => 'application/json'}).parsed_response
+    #HTTParty.get(sentiment_api_url+text, :headers => {'Content-Type' => 'application/json'}).parsed_response
   end
   
   def sentiment_label(text)
     get_sentiment(text)["label"]
+    # case get_sentiment(text)["results"]["polarity"]
+    # when 0
+    #   'neg'
+    # when 4
+    #   'pos'
+    # else
+    #   'neutral'
+    # end
   end
   
   def sentiment_probability(text, category)
     get_sentiment(text)["probability"][category]
-  end
-  
-  def gexf
-    b = "51"
-    g = "51"
-    r="255"
-    @tweets = self.tweets
-    xml = ::Builder::XmlMarkup.new(:indent => 2)
-    xml.instruct! :xml
-    xml.gexf 'xmlns' => "http://www.gephi.org/gexf", 'xmlns:viz' => "http://www.gephi.org/gexf/viz"  do
-      xml.graph 'defaultedgetype' => "directed", 'idtype' => "string", 'type' => "static" do
-        xml.nodes :count => @tweets.size + 1 do
-          xml.node :id => 0, :label => self.label
-          @tweets.each_with_index do |tweet, index|
-            xml.node :id => index+1, :label => tweet.twitter_user.handle do
-              xml.tag!("viz:size", :value => normalize(tweet.twitter_user.follower_count, TwitterUser.all.map {|u| u.follower_count}.min,TwitterUser.all.map {|u| u.follower_count}.max,10, 50))
-              xml.tag!("viz:color", :b => b, :g => g, :r => r)
-              xml.tag!("viz:position", :x => "20", :y => "30", :z => "0") 
-    	      end
-          end
-        end
-        xml.edges :count => @tweets.size do
-          @tweets.each_with_index do |tweet, index|
-            xml.edge:id => index, :source => 0, :target => index+1
-          end
-        end
-      end
-    end
   end
   
   def to_json

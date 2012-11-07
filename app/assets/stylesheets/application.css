@@ -12,3 +12,62 @@
  *= require_tree .
  *= require bootstrap_and_overrides
 */
+
+.box {
+    margin: 20px 0;
+}
+
+.box-content > .box {
+  margin: 5px 0;
+}
+.box-header {
+    background-color: #FAFAFA;
+    background-image: -moz-linear-gradient(center top , #FAFAFA, #EFEFEF);
+    border: 1px solid #DDDDDD;
+    border-radius: 2px 2px 0 0;
+    box-shadow: none;
+    height: 20px;
+    margin-bottom: -1px;
+    overflow: hidden;
+    padding: 10px;
+}
+.box-header h2 {
+    color: #333;
+    float: left;
+    font-size: 16px;
+    font-weight: bold;
+    line-height: 16px;
+    margin-top: 2px;
+    text-shadow: 0 1px 0 #FFFFFF;
+}
+.box-header h2 i {
+    margin: 1px 3px 0 5px;
+    opacity: 0.4;
+}
+.box-header .break {
+    border-left: 1px solid #FCFCFC;
+    border-right: 1px solid #DDDDDD;
+    margin: -12px 10px -10px;
+    padding: 12px 0 10px;
+}
+.box-header .box-icon {
+    float: right;
+    margin-top: 1px;
+}
+.box-header .box-icon i {
+    -moz-transition: all 0.1s ease-in-out 0s;
+    opacity: 0.4;
+}
+.box-header .box-icon i:hover {
+    opacity: 0.8;
+}
+.box-header .box-icon a {
+    margin: 0 5px;
+}
+.box-content {
+    background: none repeat scroll 0 0 #FCFCFC;
+    border: 1px solid #DDDDDD;
+    border-radius: 0 0 2px 2px;
+    margin-top: -1px;
+    padding: 10px;
+}
