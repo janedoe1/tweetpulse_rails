@@ -18,23 +18,71 @@ class Search < ActiveRecord::Base
   
   def get_tweets
     # search twitter using associated terms
+<<<<<<< Updated upstream
     self.user.twitter.search(self.search_query, :count => 20).results.map do |status|
       t = TwitterUser.create(:user_id        => status.user.id,
                              :handle         => status.from_user,
                              :follower_count => status.user.followers_count,
                              :friend_count   => status.user.friends_count,
                              :location       => status.user.location)
+=======
+    twitter_users = []
+    tweets = []
+    sentiments = []
+
+    Rails.logger.info "Getting tweets for #{self.search_query}..."
+    self.user.twitter.search(self.search_query, :count => 30).results.map do |status|
+>>>>>>> Stashed changes
       reply_count = status.reply_count.nil? ? 0 : status.reply_count
-      tweet = self.tweets.create(:tweet_id => status.id,
-                                 :text => status.text,
-                                 :twitter_user_id => t.id,
-                                 :reply_count => reply_count,
-                                 :tweeted_at => status.created_at)
-      Sentiment.create(:tweet_id => tweet.id, 
-                       :label => sentiment_label(status.text),
-                       :negative => sentiment_probability(status.text, "neg"),
-                       :positive => sentiment_probability(status.text, "pos"),
-                       :neutral => sentiment_probability(status.text, "neutral") )
+      # gather users
+      twitter_users.push "(#{status.user.id},'#{ActiveRecord::Base.connection.quote_string(status.user.id.to_s)}','#{ActiveRecord::Base.connection.quote_string(status.from_user)}', #{status.user.followers_count}, #{status.user.friends_count},'#{ActiveRecord::Base.connection.quote_string(status.user.location)}', '#{Time.now}', '#{Time.now}')"
+      # gather tweets
+      tweets.push "(#{status.id},'#{ActiveRecord::Base.connection.quote_string(status.id.to_s)}','#{ActiveRecord::Base.connection.quote_string(status.text)}',#{status.user.id},#{reply_count},'#{status.created_at}', #{self.id},'#{Time.now}', '#{Time.now}')"
+      # gather sentiments
+      sentiments.push "(#{status.id},'#{ActiveRecord::Base.connection.quote_string(sentiment_label(status.text))}',#{sentiment_probability(status.text, "neg")},#{sentiment_probability(status.text, "pos")},#{sentiment_probability(status.text, "neutral")}, '#{Time.now}', '#{Time.now}')"
+      
+      Rails.logger.info "Inserting #{twitter_users.length} twitter users into the database..."
+      twitter_users.each_slice(1000) do |batch|
+        Rails.logger.info "Inserting #{batch.length} twitter users"
+        sql = "INSERT INTO twitter_users (id, user_id, handle, follower_count, friend_count, location, created_at, updated_at) VALUES #{batch.join(", ")}
+               ON DUPLICATE KEY UPDATE follower_count = VALUES(follower_count), friend_count = VALUES(friend_count), location = VALUES(location), updated_at = VALUES(updated_at)"
+        ActiveRecord::Base.connection.execute(sql)
+      end
+      Rails.logger.info "Inserted #{twitter_users.length} twitter users"
+      
+      Rails.logger.info "Inserting #{tweets.length} tweets into the database..."
+      tweets.each_slice(1000) do |batch|
+        Rails.logger.info "Inserting #{batch.length} tweets"
+        sql = "INSERT INTO tweets (id, tweet_id, text, twitter_user_id, reply_count, tweeted_at, search_id, created_at, updated_at) VALUES #{batch.join(", ")}
+               ON DUPLICATE KEY UPDATE reply_count = VALUES(reply_count), search_id = VALUES(search_id), updated_at = VALUES(updated_at)"                
+        ActiveRecord::Base.connection.execute(sql)
+      end
+      Rails.logger.info "Inserted #{tweets.length} tweets"
+      
+      Rails.logger.info "Inserting #{sentiments.length} sentiments into the database..."
+      sentiments.each_slice(1000) do |batch|
+        Rails.logger.info "Inserting #{batch.length} sentiments"
+        sql = "INSERT INTO sentiments (tweet_id, label, negative, positive, neutral, created_at, updated_at) VALUES #{batch.join(", ")}"
+        ActiveRecord::Base.connection.execute(sql)
+      end
+      Rails.logger.info "Inserted #{sentiments.length} sentiments"
+      
+      # t = TwitterUser.create(:user_id        => status.user.id,
+      #                              :handle         => status.from_user,
+      #                              :follower_count => status.user.followers_count,
+      #                              :friend_count   => status.user.friends_count,
+      #                              :location       => status.user.location)
+      #       reply_count = status.reply_count.nil? ? 0 : status.reply_count
+      #       tweet = self.tweets.create(:tweet_id => status.id,
+      #                                  :text => status.text,
+      #                                  :twitter_user_id => t.id,
+      #                                  :reply_count => reply_count,
+      #                                  :tweeted_at => status.created_at)
+      #       Sentiment.create(:tweet_id => tweet.id, 
+      #                        :label => sentiment_label(status.text),
+      #                        :negative => sentiment_probability(status.text, "neg"),
+      #                        :positive => sentiment_probability(status.text, "pos"),
+      #                        :neutral => sentiment_probability(status.text, "neutral") )
       #if status.retweet_count > 0
         # get the retweets
       # => end
