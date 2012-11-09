@@ -18,7 +18,7 @@ class Search < ActiveRecord::Base
   
   def get_tweets
     # search twitter using associated terms
-    self.user.twitter.search(self.search_query, :count => 29).results.map do |status|
+    self.user.twitter.search(self.search_query, :count => 5).results.map do |status|
       t = TwitterUser.create(:user_id        => status.user.id,
                              :handle         => status.from_user,
                              :follower_count => status.user.followers_count,
