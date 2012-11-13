@@ -18,6 +18,16 @@ class TweetsController < ApplicationController
   # GET /tweets/1.json
   def show
     @tweet = Tweet.find(params[:id])
+	@retweets = @tweet.retweets.blank? ? @tweet.get_retweets : @tweet.retweets
+	
+	if @tweet.retweets.blank?
+      flash[:error] = "No retweets for this tweet."
+    end
+    respond_to do |format|
+      format.html # new.html.erb
+      format.json { render json: @tweet.to_json }
+    end
+	
     # begin
     #       @data = @tweet.get_data(current_user)
     #     rescue Twitter::Error::TooManyRequests
@@ -26,10 +36,7 @@ class TweetsController < ApplicationController
     #     end
     #raise @data.inspect
     #data = "[{'name':'flare.analytics.cluster.AgglomerativeCluster','size':3938,'imports':['flare.animate.Transitioner','flare.vis.data.DataList','flare.util.math.IMatrix','flare.analytics.cluster.MergeEdge','flare.analytics.cluster.HierarchicalCluster','flare.vis.data.Data']}]"
-    respond_to do |format|
-      format.html # new.html.erb
-      format.json { render json: @tweet.to_json }
-    end
+
   end
 
   # GET /tweets/new
