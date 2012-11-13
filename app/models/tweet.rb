@@ -21,13 +21,12 @@ class Tweet < ActiveRecord::Base
   
   def get_retweets
     # search retweets using associated terms
-    self.user.twitter.retweet(params[:id], :count => 29).results.map do |status|
+    self.user.twitter.retweets(params[:id], :count => 29).results.map do |status|
       t = TwitterUser.create(:user_id        => status.user.id,
                              :handle         => status.from_user,
                              :follower_count => status.user.followers_count,
                              :friend_count   => status.user.friends_count,
                              :location       => status.user.location)
-      reply_count = status.reply_count.nil? ? 0 : status.reply_count
       retweet = self.retweets.create(:tweet_id => status.id,
                                  :twitter_user_id => t.id,
                                  :created_at => status.created_at)
