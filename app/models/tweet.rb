@@ -19,6 +19,26 @@ class Tweet < ActiveRecord::Base
      :retweets         => current_user.twitter.retweets(self.tweet_id)}
   end
   
+  def get_retweets
+    # search retweets using associated terms
+    self.user.twitter.retweet(params[:id], :count => 29).results.map do |status|
+      t = TwitterUser.create(:user_id        => status.user.id,
+                             :handle         => status.from_user,
+                             :follower_count => status.user.followers_count,
+                             :friend_count   => status.user.friends_count,
+                             :location       => status.user.location)
+      reply_count = status.reply_count.nil? ? 0 : status.reply_count
+      retweet = self.retweets.create(:tweet_id => status.id,
+                                 :twitter_user_id => t.id,
+                                 :created_at => status.created_at)
+      #if status.retweet_count > 0
+        # get the retweets
+      # => end
+    end
+    self.retweets
+  end
+  
+	  
   def to_json
     data = {:nodes => [], :links => []}
     # set root node
