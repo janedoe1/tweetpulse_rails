@@ -1,5 +1,5 @@
 class Tweet < ActiveRecord::Base
-  attr_accessible :tweet_id, :text, :twitter_user_id, :reply_count, :tweeted_at,:created_at
+  attr_accessible :tweet_id, :text, :twitter_user_id, :reply_count, :tweeted_at
   
   belongs_to :search
   belongs_to :twitter_user
@@ -29,7 +29,8 @@ class Tweet < ActiveRecord::Base
                              :friend_count   => status.user.friends_count,
                              :location       => status.user.location)
       retweet = self.retweets.create(:tweet_id => status.user.id,
-                                 :twitter_user_id => t.id)
+									 :twitter_user_id => t.id,
+									 :tweeted_at => status.created_at)
       #if status.retweet_count > 0
         # get the retweets
       # => end
