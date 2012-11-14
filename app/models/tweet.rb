@@ -44,7 +44,10 @@ class Tweet < ActiveRecord::Base
     # set root node
     data[:nodes].push({:name => self.twitter_user.handle, :size => normalize(max_node_size), :color => 'white'}) 
     self.retweets.map {|retweet| data[:nodes].push({:name => "@" + retweet.twitter_user.handle, :size =>10 , :color => 'black', :tweet_tooltip => Rails.application.routes.url_helpers.tweet_tooltip_path(retweet)})}
-    self.retweets.map.with_index {|retweet, index| data[:links].push({:source => 0, :target => index+1, :value => index, :size => retweet.twitter_user.common_followers(retweet.tweet.twitter_user),:length=> retweet.tweeted_at-self.tweeted_at})}
+    self.retweets.map.with_index {|retweet, index| data[:links].push({:source => 0, :target => index+1, :value => index, :size => retweet.twitter_user.common_followers(retweet.tweet.twitter_user),:length=> })}
+	
+	#retweet.twitter_user.common_followers(retweet.tweet.twitter_user)
+	#retweet.tweeted_at-self.tweeted_at
 	
 	#:size => normalize(retweet.twitter_user.common_followers(retweet.tweet.twitter_user)),length=> normalize(retweet.created_at-Time.now)})}
 	#normalize(retweet.twitter_user.follower_count)

@@ -9,7 +9,7 @@ class TwitterUser < ActiveRecord::Base
     begin
       my_followers = client.follower_ids(self.user_id.to_i).ids
       other_followers = client.follower_ids(other_user.user_id.to_i).ids
-      (my_followers & other_followers).count.to_f / (my_followers.count + other_followers.count).to_f
+      2*(my_followers & other_followers).count.to_f / (my_followers.count + other_followers.count).to_f
     rescue Twitter::Error::TooManyRequests => e
       puts e
       Rails.logger.info 'Twitter rate limit exceeded'
