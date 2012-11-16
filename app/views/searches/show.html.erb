@@ -38,7 +38,7 @@ text {
 }
 
 text.shadow {
-  stroke: #000;
+  stroke: #fff;
   stroke-width: 3px;
   stroke-opacity: 1;
 }
@@ -104,7 +104,7 @@ text.shadow {
     text.append("svg:text")
         .attr("x", function(d) { return d.size; })
         .attr("y", ".31em")
-        .style("fill", 'white')
+        .style("fill", 'black')
         .text(function(d) { return d.name; });
         
     force.on("tick", function() {
