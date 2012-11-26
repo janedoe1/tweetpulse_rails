@@ -18,7 +18,7 @@ class TweetsController < ApplicationController
   # GET /tweets/1.json
   def show
     @tweet = Tweet.find(params[:id])
-	@retweets = @tweet.retweets.blank? ? @tweet.get_retweets : @tweet.retweets
+	@retweets = @tweet.retweets.blank? ? @tweet.get_retweets(current_user) : @tweet.retweets
 	
 	if @tweet.retweets.blank?
       flash[:error] = "No retweets for this tweet."

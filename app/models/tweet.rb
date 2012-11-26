@@ -19,10 +19,10 @@ class Tweet < ActiveRecord::Base
      :retweets         => current_user.twitter.retweets(self.tweet_id)}
   end
   
-  def get_retweets
+  def get_retweets current_user
     # search retweets using associated terms
-	client = Twitter::Client.new
-    client.retweets(self.tweet_id, :count => 29).map do |status|
+	# client = Twitter::Client.new
+    current_user.twitter.retweets(self.tweet_id, :count => 29).map do |status|
       t = TwitterUser.create(:user_id        => status.user.id,
                              :handle         => status.user.name,
                              :follower_count => status.user.followers_count,
@@ -44,7 +44,7 @@ class Tweet < ActiveRecord::Base
     # set root node
     data[:nodes].push({:name => self.twitter_user.handle, :size => normalize(max_node_size), :color => 'white'}) 
     self.retweets.map {|retweet| data[:nodes].push({:name => "@" + retweet.twitter_user.handle, :size =>10 , :color => 'black', :tweet_tooltip => Rails.application.routes.url_helpers.tweet_tooltip_path(retweet)})}
-    self.retweets.map.with_index {|retweet, index| data[:links].push({:source => 0, :target => index+1, :value => index, :size => retweet.twitter_user.common_followers(retweet.tweet.twitter_user),:length=> })}
+    self.retweets.map.with_index {|retweet, index| data[:links].push({:source => 0, :target => index+1, :value => index, :size => retweet.twitter_user.common_followers(retweet.tweet.twitter_user),:length=> 30})}
 	
 	#retweet.twitter_user.common_followers(retweet.tweet.twitter_user)
 	#retweet.tweeted_at-self.tweeted_at
