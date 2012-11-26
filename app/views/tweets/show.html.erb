@@ -1,5 +1,6 @@
 <%- model_class = Tweet -%>
-<%= databox("Tweet from @#{@tweet.twitter_user.handle} matching '#{@tweet.search.label}'") do %>
+<%= databox("Tweet from @#{@tweet.twitter_user.handle} ") do %>
+
 
 <div id="chart" style="width:100%; height:550px;"></div>
 

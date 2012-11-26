@@ -27,15 +27,15 @@ class Search < ActiveRecord::Base
 
 	source = "twitter"
 	term = self.search_query
-	first = "yesterday"
+	last = "today"
 	count = "30"
 
-	url = 'http://api.peoplebrowsr.com/kredinfluence?'
+	url = 'http://api.peoplebrowsr.com/kredretweetinfluence?'
 	url = url + 'app_id=' + app_id
 	url = url + '&app_key=' + app_key
 	url = url + '&term=' + term
 	url = url + '&source=' + source
-	url = url + "&first=" + first
+	url = url + "&last=" + last
 	url = url + "&count=" + count
 	uri = URI.parse(URI.encode(url.strip))
 	response = Net::HTTP.get_response(uri)
@@ -43,7 +43,7 @@ class Search < ActiveRecord::Base
 	result.each do |influencer|
 		self.TwitterUsers.create(
 							:user_id => influencer['numeric_id'].to_s,
-							:handle         => influencer['name'],
+							:handle         => influencer['id'],
 							:follower_count => influencer['followers'],
 							:friend_count   => influencer['following'])
 		end
@@ -95,7 +95,7 @@ class Search < ActiveRecord::Base
     search = ""
     search += "from:#{handle} " unless handle.blank?
     search += keywords.join(" ") if keywords
-    search += " ##{hashtags.join(" ")}" if hashtags
+    search += " ##{hashtags.join(" ")}" unless hashtags
     search
   end
   

@@ -1,0 +1,13 @@
+<%= simple_form_for(@search, :html => { :class => 'form-horizontal' }) do |f| %>
+  <%= f.error_notification %>
+  <div class="form-inputs">
+    <%= f.simple_fields_for :terms do |term_form|  %>
+        <%= term_form.input :text, :size => "80", :label => :type.to_s, :hint => "Search tweets that include this keyword",:input_html => {:style => "width:233px;"} %>
+        <%= term_form.hidden_field :type %>
+    <% end %>
+  </div>
+  <div class="form-actions">
+    <%= f.button :submit, :class => 'btn-primary' %>
+    <%= submit_tag 'Cancel', :type => :reset, :class => "btn btn-danger" %>
+  </div>
+<% end %>
