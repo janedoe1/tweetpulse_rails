@@ -1,7 +1,7 @@
 <%= row do %>
-<%= databox("Tweets matching search '#{@search.label}'", :class => 'span12') do %>
+<%= databox("Results for search '#{@search.label}'", :class => 'span12') do %>
   <small class="pull-right" style="padding-top:3px;"><i class='icon-refresh'></i> <%= link_to "Refresh results", refresh_search_results_path(@search.id) %></small>
-  <% unless @search.TwitterUsers.blank? %>
+  <% unless @search.twitter_users.blank? %>
     <div id="chart" style="width:100%; height:550px;"></div>
   <% else %>
     There are no tweets matching this search.
@@ -85,7 +85,7 @@ text.shadow {
         .attr("class", "node")
         .attr("r", function(d) { return d.size; })
         .attr("title", function(d) { return d.name; })
-        .attr("detail", function(d) { return d.tweet_tooltip; })
+        .attr("detail", function(d) { return d.twitter_user_tooltip; })
         .attr("color", function(d) { return d.color; })
         .style("fill", function(d) { return d.color; })
         .call(force.drag);

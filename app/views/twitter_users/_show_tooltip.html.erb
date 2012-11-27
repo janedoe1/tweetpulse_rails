@@ -1,0 +1,10 @@
+<%= stylesheet_link_tag "application", :media => "all" %>
+<%- model_class = TwitterUser -%>
+
+<div style="border-bottom:1px solid #999">
+<h4><%= link_to "@#{@twitter_user.handle}", twitter_user_page(@twitter_user.handle)  %> 
+  <small><%= number_with_delimiter(@twitter_user.follower_count, :delimiter => ',') %> followers,</small>
+  <small><%= number_with_delimiter(@twitter_user.friend_count, :delimiter => ',') %> following</small>
+</h4>
+</div>
+<p><%= link_to "View matching tweets >", twitter_user_path(@twitter_user) %>

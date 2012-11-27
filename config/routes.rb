@@ -27,6 +27,7 @@ Tweetpulse::Application.routes.draw do
   get "/auth/twitter", :as => "twitter_auth"
   
   get "/tweets/:tweet_id/tooltip", :as => "tweet_tooltip", :to => "tweets#show_tooltip"
+  get "/twitter_users/:twitter_user_id/tooltip", :as => "twitter_user_tooltip", :to => "twitter_users#show_tooltip"
   
   # The priority is based upon order of creation:
   # first created -> highest priority.

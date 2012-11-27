@@ -8,13 +8,13 @@ class TwitterUser < ActiveRecord::Base
   
   def get_tweets current_user
     # search twitter using associated terms
-	
+  
     current_user.twitter.search(self.search_query, :count => 29).results.map do |status|
 #      t = TwitterUser.create(:user_id        => status.user.id,
 #                             :handle         => status.from_user,
 #                             :follower_count => status.user.followers_count,
 #                             :friend_count   => status.user.friends_count,
-#							  :location       => status.user.location)
+#               :location       => status.user.location)
       reply_count = status.reply_count.nil? ? 0 : status.reply_count
       tweet = self.tweets.create(:tweet_id => status.id,
                                  :text => status.text,
@@ -62,7 +62,7 @@ class TwitterUser < ActiveRecord::Base
   
   # search_query method is wrong!
   def search_query
-	require 'uri'
+  require 'uri'
     keywords = []
     hashtags = []
     self.search.terms.each do |term|
@@ -77,8 +77,8 @@ class TwitterUser < ActiveRecord::Base
     search += "from:#{handle}+" unless handle.blank?
     search += keywords.join("+") if keywords
     #search += " ##{hashtags.join("+")}" if hashtags
-	search=URI.encode(search)
-	puts search
+  search=URI.encode(search)
+  puts search
     search
   end
   

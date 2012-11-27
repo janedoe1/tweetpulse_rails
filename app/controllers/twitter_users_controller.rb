@@ -39,6 +39,12 @@ class TwitterUsersController < ApplicationController
     redirect_to twitter_user_path(@twitter_user)
   end
   
+  def show_tooltip
+    @twitter_user = TwitterUser.find(params[:twitter_user_id])
+    render :partial => 'twitter_users/show_tooltip'
+    #render :layout => false
+  end
+  
   protected
 
 end

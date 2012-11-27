@@ -27,8 +27,8 @@ class SearchesController < ApplicationController
     #end
 	
 	@search = current_user.searches.find(params[:id])
-    @tweets = @search.TwitterUsers.blank? ? @search.get_twitter_users : @search.TwitterUsers
-    if @search.TwitterUsers.blank?
+    @tweets = @search.twitter_users.blank? ? @search.get_twitter_users : @search.twitter_users
+    if @search.twitter_users.blank?
       flash[:error] = "No users matched this search."
       #redirect_to searches_path
     end
