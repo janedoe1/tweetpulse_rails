@@ -16,6 +16,8 @@ Tweetpulse::Application.routes.draw do
   resources :keyword_terms
 
   resources :terms
+  
+  resources :twitter_users
 
   root :to => 'dashboard#index'
   get "/dashboard", :as => "dashboard", :to => "dashboard#index"

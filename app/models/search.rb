@@ -1,10 +1,11 @@
 class Search < ActiveRecord::Base
-  attr_accessible :user_id, :terms_attributes
+  attr_accessible :user_id, :terms_attributes, :search_id
   belongs_to :user
   has_and_belongs_to_many :terms
   has_many :tweets
+  has_many :TwitterUsers
   
-  accepts_nested_attributes_for :terms, :reject_if => lambda { |a| a[:text].blank? }
+  accepts_nested_attributes_for :terms, :TwitterUsers, :reject_if => lambda { |a| a[:text].blank? }
     
   # def autosave_associated_records_for_terms
   #   i = 0
@@ -15,6 +16,40 @@ class Search < ActiveRecord::Base
   #     i += 1
   #   end
   # end
+  
+  #Kred API
+  def get_twitter_users
+	require 'net/http'
+	require 'json'         
+    
+	app_id = "5e918fed"
+	app_key = "0e413b1d6831771be8af2bb2999508db"
+
+	source = "twitter"
+	term = self.search_query
+	last = "today"
+	count = "30"
+
+	url = 'http://api.peoplebrowsr.com/kredretweetinfluence?'
+	url = url + 'app_id=' + app_id
+	url = url + '&app_key=' + app_key
+	url = url + '&term=' + term
+	url = url + '&source=' + source
+	url = url + "&last=" + last
+	url = url + "&count=" + count
+	uri = URI.parse(URI.encode(url.strip))
+	response = Net::HTTP.get_response(uri)
+	result = JSON.parse(response.body)['data']
+	result.each do |influencer|
+		self.TwitterUsers.create(
+							:user_id => influencer['numeric_id'].to_s,
+							:handle         => influencer['id'],
+							:follower_count => influencer['followers'],
+							:friend_count   => influencer['following'])
+		end
+	self.TwitterUsers
+   end
+	
   
   def get_tweets
     # search twitter using associated terms
@@ -60,7 +95,7 @@ class Search < ActiveRecord::Base
     search = ""
     search += "from:#{handle} " unless handle.blank?
     search += keywords.join(" ") if keywords
-    search += " ##{hashtags.join(" ")}" if hashtags
+    search += " ##{hashtags.join(" ")}" unless hashtags
     search
   end
   
@@ -88,6 +123,16 @@ class Search < ActiveRecord::Base
   
   def sentiment_probability(text, category)
     get_sentiment(text)["probability"][category]
+  end
+  
+  def user_to_json
+	data = {:nodes => [], :links => []}
+    # set root node
+    data[:nodes].push({:name => self.label, :size => normalize(max_node_size), :color => 'white'}) 
+    self.TwitterUsers.map {|twitteruser| data[:nodes].push({:name => "@" + twitteruser.handle, :size => normalize(twitteruser.follower_count), :color => 'red',:tweet_tooltip => Rails.application.routes.url_helpers.tweet_tooltip_path(twitteruser)})}
+    self.TwitterUsers.map.with_index {|tweet, index| data[:links].push({:source => 0, :target => index+1, :value => index, :size => 1})}
+    Rails.logger.info data
+    data.to_json
   end
   
   def to_json

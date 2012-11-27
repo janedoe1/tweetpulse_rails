@@ -18,7 +18,16 @@ class TweetsController < ApplicationController
   # GET /tweets/1.json
   def show
     @tweet = Tweet.find(params[:id])
-    # begin
+    @retweets = @tweet.retweets.blank? ? @tweet.get_retweets(current_user) : @tweet.retweets
+  	  if @tweet.retweets.blank?
+        flash[:error] = "No retweets for this tweet."
+      end
+      respond_to do |format|
+        format.html # new.html.erb
+        format.json { render json: @tweet.to_json }
+      end
+	
+      # begin
     #       @data = @tweet.get_data(current_user)
     #     rescue Twitter::Error::TooManyRequests
     #       flash[:error] = "You have exceeded Twitter's API request limit. Please try again in 15 minutes."
