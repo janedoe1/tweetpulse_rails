@@ -8,4 +8,5 @@
 </h4>
 </div>
 <small>Retweeted at: <%= tweet_date(@retweet.tweeted_at) %></small>
-<p style="margin-top:5px;color:black;font-weight: bold"><%= @retweet.tweet.text %> <small class="pull-right" style="margin-top:5px;"></p>
+<p style="color:black;font-weight: bold">Influence: <%= number_with_delimiter(@retweet.twitter_user.influence, :delimiter => ',') %></p>
+<p style="color:black;font-weight: bold">Outreach: <%= number_with_delimiter(@retweet.twitter_user.outreach, :delimiter => ',') %>

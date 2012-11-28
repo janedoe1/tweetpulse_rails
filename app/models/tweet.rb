@@ -23,11 +23,47 @@ class Tweet < ActiveRecord::Base
     # search retweets using associated terms
 	# client = Twitter::Client.new
     current_user.twitter.retweets(self.tweet_id, :count => 29).map do |status|
+	
+	require 'net/http'
+    require 'json'         
+    
+    app_id = "5e918fed"
+    app_key = "0e413b1d6831771be8af2bb2999508db"
+
+    source = "twitter"
+	term = status.user.screen_name.downcase 
+
+	url = 'http://api.kred.ly/kredscore?'
+	url = url + 'app_id=' + app_id
+	url = url + '&app_key=' + app_key
+	url = url + '&term=' + term
+	url = url + '&source=' + source
+	
+    uri = URI.parse(URI.encode(url.strip))
+    response = Net::HTTP.get_response(uri)
+    #raise JSON.parse(response.body)['data'].inspect
+    result = JSON.parse(response.body)['data']
+
+	if(result[0]['outreach'].nil?)
+	outreach = 0
+	else
+	outreach = result[0]['outreach'].to_i
+	end
+	
+	if(result[0]['influence'].nil?)
+	influence = 0
+	else
+	influence = result[0]['influence'].to_i
+	end
+	
+    
       t = TwitterUser.create(:user_id        => status.user.id,
-                             :handle         => status.user.name,
+                             :handle         => status.user.screen_name,
                              :follower_count => status.user.followers_count,
                              :friend_count   => status.user.friends_count,
 							 :avatar         => status.user.profile_image_url,
+							 :outreach       => outreach,
+							 :influence      => influence,
                              :location       => status.user.location)
       retweet = self.retweets.create(:tweet_id => status.user.id,
                    :twitter_user_id => t.id,
