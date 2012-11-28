@@ -2,9 +2,11 @@
 <%- model_class = TwitterUser -%>
 
 <div style="border-bottom:1px solid #999">
-<h4><%= link_to "@#{@twitter_user.handle}", twitter_user_page(@twitter_user.handle)  %> 
+<h4><img src="<%= number_with_delimiter(@twitter_user.avatar, :delimiter => ',') %>"> <%= link_to "@#{@twitter_user.handle}", twitter_user_page(@twitter_user.handle)  %> 
   <small><%= number_with_delimiter(@twitter_user.follower_count, :delimiter => ',') %> followers,</small>
   <small><%= number_with_delimiter(@twitter_user.friend_count, :delimiter => ',') %> following</small>
 </h4>
 </div>
-<p><%= link_to "View matching tweets >", twitter_user_path(@twitter_user) %>
+<p style="color:black;font-weight: bold">Influence: <%= number_with_delimiter(@twitter_user.influence, :delimiter => ',') %></p>
+<p style="color:black;font-weight: bold">Outreach: <%= number_with_delimiter(@twitter_user.outreach, :delimiter => ',') %>
+<small class="pull-right"><%= link_to 'View matching tweets', twitter_user_path(@twitter_user) %></small></p>

@@ -45,6 +45,9 @@ class Search < ActiveRecord::Base
       self.twitter_users.create(
                 :user_id        => influencer['numeric_id'].to_s,
                 :handle         => influencer['id'],
+				:avatar			=> influencer['avatar'],
+				:influence		=> influencer['influence'],
+				:outreach		=> influencer['outreach'],
                 :follower_count => influencer['followers'],
                 :friend_count   => influencer['following'])
     end
@@ -130,7 +133,7 @@ class Search < ActiveRecord::Base
   data = {:nodes => [], :links => []}
     # set root node
     data[:nodes].push({:name => self.label, :size => normalize(max_node_size), :color => 'white'}) 
-    self.twitter_users.map {|twitteruser| data[:nodes].push({:name => "@" + twitteruser.handle, :size => normalize(twitteruser.follower_count), :color => 'black',:twitter_user_tooltip => Rails.application.routes.url_helpers.twitter_user_tooltip_path(twitteruser)})}
+    self.twitter_users.map {|twitteruser| data[:nodes].push({:name => "@" + twitteruser.handle, :size => normalize(twitteruser.follower_count), :color => 'black',:avatar =>twitteruser.avatar,:twitter_user_tooltip => Rails.application.routes.url_helpers.twitter_user_tooltip_path(twitteruser)})}
     self.twitter_users.map.with_index {|tweet, index| data[:links].push({:source => 0, :target => index+1, :value => index, :size => 1})}
     Rails.logger.info data
     data.to_json

@@ -98,7 +98,7 @@ class TweetsController < ApplicationController
   end
   
   def show_tooltip
-    @tweet = Retweet.find(params[:retweet_id])
+    @tweet = Tweet.find(params[:tweet_id])
     render :partial => 'tweets/show_tooltip'
     #render :layout => false
   end

@@ -1,5 +1,5 @@
 class TwitterUser < ActiveRecord::Base
-  attr_accessible :follower_count, :friend_count, :handle, :location, :user_id
+  attr_accessible :follower_count, :friend_count, :handle, :location, :user_id, :avatar, :influence, :outreach
 
   belongs_to :search
   has_many :tweets

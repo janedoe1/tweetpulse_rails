@@ -107,6 +107,16 @@ text.shadow {
         .style("fill", 'black')
         .text(function(d) { return d.name; });
         
+/*
+    text.append("svg:image")
+    	.attr("xlink:href", function(d) { return d.avatar; })
+    	.attr("x", -8)
+    	.attr("y", -8)
+    	.attr("width", function(d) { return d.size*3; })
+    	.attr("height", function(d) { return d.size*3; });
+*/
+
+        
     force.on("tick", function() {
       nodes[0].x = width / 2;
       nodes[0].y = height / 2;

@@ -88,6 +88,7 @@ text.shadow {
         .attr("color", function(d) { return d.color; })
         .style("fill", function(d) { return d.color; })
         .call(force.drag);
+    
 
     var text = svg.append("svg:g").selectAll("g")
         .data(force.nodes())
