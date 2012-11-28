@@ -21,12 +21,13 @@ class Tweet < ActiveRecord::Base
   
   def get_retweets current_user
     # search retweets using associated terms
-  # client = Twitter::Client.new
+	# client = Twitter::Client.new
     current_user.twitter.retweets(self.tweet_id, :count => 29).map do |status|
       t = TwitterUser.create(:user_id        => status.user.id,
                              :handle         => status.user.name,
                              :follower_count => status.user.followers_count,
                              :friend_count   => status.user.friends_count,
+							 :avatar         => status.user.profile_image_url,
                              :location       => status.user.location)
       retweet = self.retweets.create(:tweet_id => status.user.id,
                    :twitter_user_id => t.id,
@@ -39,12 +40,12 @@ class Tweet < ActiveRecord::Base
   end
 
   
-  def to_json
+  def to_json current_user
     data = {:nodes => [], :links => []}
     # set root node
-    data[:nodes].push({:name => self.twitter_user.handle, :size => normalize(max_node_size), :color => 'white'}) 
-    self.retweets.map {|retweet| data[:nodes].push({:name => "@" + retweet.twitter_user.handle, :size =>10 , :color => 'black', :tweet_tooltip => Rails.application.routes.url_helpers.tweet_tooltip_path(retweet)})}
-    self.retweets.map.with_index {|retweet, index| data[:links].push({:source => 0, :target => index+1, :value => index, :size => retweet.twitter_user.common_followers(retweet.tweet.twitter_user),:length=> 30})}
+    data[:nodes].push({:name => self.twitter_user.handle, :size => normalize(max_node_size), :color => 'white'})
+    self.retweets.map {|retweet| data[:nodes].push({:name => "@" + retweet.twitter_user.handle, :size =>normalize(retweet.twitter_user.follower_count) , :color => 'black', :tweet_tooltip => Rails.application.routes.url_helpers.retweet_tooltip_path(retweet)})}
+    self.retweets.map.with_index {|retweet, index| data[:links].push({:source => 0, :target => index+1, :value => index, :size => 1,:length=> 400-length_normalize(Time.now-retweet.tweeted_at)})}
   
     #retweet.twitter_user.common_followers(retweet.tweet.twitter_user)
     #retweet.tweeted_at-self.tweeted_at
@@ -54,7 +55,7 @@ class Tweet < ActiveRecord::Base
     Rails.logger.info data
     data.to_json
   end
-  
+    
   def normalize val
     unless min_node_size == max_node_size
       xmin = min_node_size
@@ -72,17 +73,45 @@ class Tweet < ActiveRecord::Base
   end
   
   def user_node_size
-    #self.retweets.first.twitter_user.follower_count
+    self.retweets.first.twitter_user.follower_count
   end
   
   def min_node_size
-    #self.retweets.map {|t| t.twitter_user.follower_count}.min
-    100
+    self.retweets.map {|t| t.twitter_user.follower_count}.min
   end
   
   def max_node_size
-    #self.retweets.map {|t| t.twitter_user.follower_count}.max
-    200
+    self.retweets.map {|t| t.twitter_user.follower_count}.max
   end
+  
+  def length_normalize val
+    unless min_node_size == max_node_size
+      xmin = min_length_size
+      xmax = max_length_size
+      norm_min = 100
+      norm_max = 200
+      xrange = xmax-xmin
+      norm_range = norm_max-norm_min
+      (val-xmin).to_f * (norm_max.to_f - norm_min.to_f) / (xmax.to_f - xmin.to_f) + norm_min
+    else
+      100
+    end
+    #y = 1 + (x-A)*(10-1)/(B-A)
+    #norm_min + (val-xmin) * (norm_range.to_f / xrange)
+  end
+  
+  def user_length_size
+    Time.now-self.retweets.first.tweeted_at
+  end
+  
+  def min_length_size
+    self.retweets.map {|t| (Time.now-t.tweeted_at)}.min
+  end
+  
+  def max_length_size
+    self.retweets.map {|t| (Time.now-t.tweeted_at)}.max
+  end
+  
+  
   
 end

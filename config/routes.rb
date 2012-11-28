@@ -23,11 +23,14 @@ Tweetpulse::Application.routes.draw do
   get "/dashboard", :as => "dashboard", :to => "dashboard#index"
   
   get "/searches/:search_id/refresh", :as => "refresh_search_results", :to => "searches#refresh_results"
+  get "/tweets/:tweet_id/refresh", :as => "refresh_tweet_results", :to => "tweets#refresh_results"
+
   
   get "/auth/twitter", :as => "twitter_auth"
   
   get "/tweets/:tweet_id/tooltip", :as => "tweet_tooltip", :to => "tweets#show_tooltip"
   get "/twitter_users/:twitter_user_id/tooltip", :as => "twitter_user_tooltip", :to => "twitter_users#show_tooltip"
+  get "/retweets/:id/tooltip", :as => "retweet_tooltip", :to => "retweets#show_tooltip"
   
   # The priority is based upon order of creation:
   # first created -> highest priority.

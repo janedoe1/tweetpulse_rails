@@ -139,11 +139,11 @@ class TwitterUser < ActiveRecord::Base
     self.tweets.map {|t| t.twitter_user.follower_count}.max
   end
 
-  def common_followers other_user
-    client = Twitter::Client.new
+  def common_followers (current_user,other_user)
+    #client = Twitter::Client.new
     begin
-      my_followers = client.follower_ids(self.user_id.to_i).ids
-      other_followers = client.follower_ids(other_user.user_id.to_i).ids
+      my_followers = current_user.twitter.follower_ids(self.user_id.to_i).ids
+      other_followers = current_user.twitter.follower_ids(other_user.user_id.to_i).ids
       2*(my_followers & other_followers).count.to_f / (my_followers.count + other_followers.count).to_f
     rescue Twitter::Error::TooManyRequests => e
       puts e

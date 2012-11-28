@@ -24,7 +24,7 @@ class TweetsController < ApplicationController
       end
       respond_to do |format|
         format.html # new.html.erb
-        format.json { render json: @tweet.to_json }
+        format.json { render json: @tweet.to_json(current_user) }
       end
   
       # begin
@@ -97,9 +97,24 @@ class TweetsController < ApplicationController
     end
   end
   
+  
   def show_tooltip
     @tweet = Tweet.find(params[:tweet_id])
     render :partial => 'tweets/show_tooltip'
     #render :layout => false
   end
+  
+  def refresh_results
+    @tweet = Tweet.find(params[:tweet_id])
+    @tweet.retweets.destroy_all
+    begin
+      @tweet.get_retweets(current_user)
+    rescue Twitter::Error::InternalServerError => e
+      puts e
+      Rails.logger.info e.message
+      flash[:error] = 'Twitter is not responding. Please try again in a few minutes.'
+    end
+    redirect_to tweet_path(@tweet)
+  end
+
 end
