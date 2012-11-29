@@ -1,11 +1,21 @@
 <%= stylesheet_link_tag "application", :media => "all" %>
 <%- model_class = Tweet -%>
 
-<div style="border-bottom:1px solid #999">
-<h4><img src="<%= number_with_delimiter(@tweet.twitter_user.avatar, :delimiter => ',') %>"><%= link_to "@#{@tweet.twitter_user.handle}", twitter_user_page(@tweet.twitter_user.handle)  %> 
-  <small><%= number_with_delimiter(@tweet.twitter_user.follower_count, :delimiter => ',') %> followers,</small>
-  <small><%= number_with_delimiter(@tweet.twitter_user.friend_count, :delimiter => ',') %> following</small>
-</h4>
+<div style="border-bottom:1px solid #999; overflow:auto;">
+  <div style="width:70px; float:left; margin:4px 0 10px;">
+    <%= image_tag @tweet.twitter_user.avatar, :class => "img-polaroid" %>
+  </div>
+  <div style="width:250px; float:left;">
+    <h4 style="margin:0 0 5px 0;"><%= link_to "@#{@tweet.twitter_user.handle}", twitter_user_page(@tweet.twitter_user.handle)  %></h4>
+    <small><%= number_with_delimiter(@tweet.twitter_user.follower_count, :delimiter => ',') %> followers</small><br/>
+    <small><%= number_with_delimiter(@tweet.twitter_user.friend_count, :delimiter => ',') %> following</small>
+  </div>
+  <div class="pull-right">
+    <%= link_to 'View retweets »', tweet_path(@tweet) %>
+  </div>
 </div>
-<small><%= tweet_date(@tweet.tweeted_at) %></small>
-<p style="margin-top:5px;color:black;font-weight: bold"><%= @tweet.text %> <small class="pull-right" style="margin-top:5px;"><%= link_to 'View retweets', tweet_path(@tweet) %></small></p>
+
+<div style="clear:both;margin-top:10px;">
+  <small>Tweeted on <%= tweet_date(@tweet.tweeted_at) %></small>
+  <p style="margin-top:5px;color:black;font-weight: bold"><%= @tweet.text %></p>
+</div>
