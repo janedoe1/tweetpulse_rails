@@ -35,6 +35,11 @@ gem 'nokogiri'
 gem 'builder'
 gem 'httparty'
 
+group :production do
+  # gems specifically for Heroku go here
+  gem "pg"
+end
+
 # gem 'omniauth'
 
 # To use ActiveModel has_secure_password
