@@ -8,21 +8,13 @@
     </tr>
   </thead>
   <tbody>
+    <% @presenter.top_influencers.each do |twitter_user| %>
       <tr>
-        <td>@KimKardashian</td>
-        <td>994</td>
-        <td>7</td>
+        <td><%= twitter_user.handle %></td>
+        <td><%= twitter_user.influence rescue 0 %></td>
+        <td><%= twitter_user.outreach rescue 0 %></td>
       </tr>
-      <tr>
-        <td>@Reuters</td>
-        <td>986</td>
-        <td>5</td>
-      </tr>
-      <tr>
-        <td>@HuffingtonPost</td>
-        <td>940</td>
-        <td>6</td>
-      </tr>
+    <% end %>
   </tbody>
 </table>
 </div>

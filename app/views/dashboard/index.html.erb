@@ -1,13 +1,22 @@
 <div class="page-header">
-  <h4>Dashboard</h4>
+  <h4>Dashboard <%= select_tag "Search", options_from_collection_for_select(@presenter.searches, "id", "label"), :class => "pull-right" %></h4>
 </div>
-
-<%= row do %>  
+<%= row do %>
   <%= databox("Sentiment Breakdown", :class => 'span6', :inner_style => 'padding:0;') do %>
     <div id="sentiment-graph"></div>
   <% end %>
-  <%= databox("Tweet Counts by Search", :class => 'span6', :inner_style => 'padding:0;') do %>
-  <div id="search-graph"></div>
+  <%= databox("Top Influencers", :class => 'span6', :inner_style => 'padding:0;') do %>
+    <%#= render :partial => "dashboard/top_influencers" %>
+    <div id="influencer-graph"></div>
+  <% end %>
+<% end %>
+<%= row do %>
+  <%= databox("Outreach vs. Influence", :class => 'span6', :inner_style => 'padding:0;') do %>
+    <%#= render :partial => "dashboard/top_influencers" %>
+    <div id="influence-vs-outreach-graph"></div>
+  <% end %>
+  <%= databox("Top Tweets", :class => 'span6', :inner_style => 'padding:0;') do %>
+    <%= render :partial => "dashboard/top_tweets" %>
   <% end %>
 <% end %>
 
@@ -35,23 +44,6 @@
     ['Neutral', <%= @presenter.sentiment_tweet_count('neutral') %>]
   ]);
   
-  var search_chart_data = google.visualization.arrayToDataTable([
-    ['Search', 'Number of Tweets'],
-    <%= raw(@presenter.search_tweet_counts * ",") %>
-    ]);
-  
-    // Create and draw the visualization.
-    new google.visualization.BarChart(document.getElementById('search-graph')).
-        draw(search_chart_data,
-             {width:$('#search-graph').width(),
-              legend: 'none',
-              fontName: 'Verdana',
-              backgroundColor: '#fcfcfc',
-              tooltip: {textStyle:{fontSize:9}},
-              vAxis: {title: 'Search'},
-              hAxis: {title: "Number of Tweets"}}
-        );
-  
   // Set chart options
   var sentiment_chart_options = {width:$('#sentiment-graph').width(),
                  fontName: 'Verdana',
@@ -65,6 +57,39 @@
   var sentiment_chart = new google.visualization.PieChart(document.getElementById('sentiment-graph'));
   sentiment_chart.draw(sentiment_chart_data, sentiment_chart_options);
   
+  var top_influencers_data = google.visualization.arrayToDataTable([
+     ['User', 'Influence'],
+     <%= raw(@presenter.top_influencers * ",") %>
+     ]);
+
+     // Create and draw the visualization.
+     new google.visualization.BarChart(document.getElementById('influencer-graph')).
+         draw(top_influencers_data,
+              {width:$('#influencer-graph').width(),
+               legend: 'none',
+               fontName: 'Verdana',
+               backgroundColor: '#fcfcfc',
+               tooltip: {textStyle:{fontSize:9}},
+               vAxis: {title: 'User'},
+               hAxis: {title: "Influence"}}
+         );
+  var top_influencers_data = google.visualization.arrayToDataTable([
+    ['Influence', 'Outreach'],
+    <%= raw(@presenter.influence_vs_outreach * ",") %>
+    ]);
+
+    // Create and draw the visualization.
+    new google.visualization.ScatterChart(document.getElementById('influence-vs-outreach-graph')).
+        draw(top_influencers_data,
+             {width:$('#influence-vs-outreach-graph').width(),
+              legend: 'none',
+              fontName: 'Verdana',
+              backgroundColor: '#fcfcfc',
+              tooltip: {textStyle:{fontSize:9}},
+              vAxis: {title: 'Influence'},
+              hAxis: {title: "Outreach"}}
+        );
+
   
 }
 </script>
