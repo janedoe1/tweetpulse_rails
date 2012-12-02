@@ -42,6 +42,7 @@ gem 'omniauth-twitter'
 gem 'nokogiri'
 gem 'builder'
 gem 'httparty'
+gem 'jquery_datepicker'
 
 # gem 'omniauth'
 

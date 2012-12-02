@@ -1,12 +1,13 @@
 class Search < ActiveRecord::Base
-  attr_accessible :user_id, :terms_attributes, :search_id
+  attr_accessible :user_id, :terms_attributes, :search_id, :from_date, :to_date
   belongs_to :user
   has_and_belongs_to_many :terms
   has_many :tweets
   has_many :twitter_users
   
   accepts_nested_attributes_for :terms, :twitter_users, :reject_if => lambda { |a| a[:text].blank? }
-    
+  validates_presence_of :from_date, :to_date
+  
   # def autosave_associated_records_for_terms
   #   i = 0
   #   terms.each do |term|
@@ -45,15 +46,14 @@ class Search < ActiveRecord::Base
       self.twitter_users.create(
                 :user_id        => influencer['numeric_id'].to_s,
                 :handle         => influencer['id'],
-				:avatar			=> influencer['avatar'],
-				:influence		=> influencer['influence'],
-				:outreach		=> influencer['outreach'],
+                :avatar         => influencer['avatar'],
+                :influence      => influencer['influence'],
+                :outreach       => influencer['outreach'],
                 :follower_count => influencer['followers'],
                 :friend_count   => influencer['following'])
     end
     self.twitter_users
   end
-  
   
   def get_tweets
     # search twitter using associated terms

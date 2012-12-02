@@ -95,7 +95,7 @@
                   <li class="nav-header">Your Searches</li>
                   <% unless current_user.searches.count == 0 %>
                       <% current_user.searches.each do |search| %>
-                        <li class='search-item'><%= link_to search.label, search_path(search) %></li>
+                        <li class='search-item'><%= link_to truncate(search.label, :length => 30), search_path(search) %></li>
                       <% end %>
                   <% else %>
                     <li><small><%= "You aren't tracking anything" if current_user.searches.blank? %></small></li>
