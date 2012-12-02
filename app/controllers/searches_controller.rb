@@ -109,9 +109,9 @@ class SearchesController < ApplicationController
   
   def refresh_results
     @search = current_user.searches.find(params[:search_id])
-    @search.tweets.destroy_all
+    @search.twitter_users.destroy_all
     begin
-      @search.get_tweets
+      @search.get_twitter_users
     rescue Twitter::Error::InternalServerError => e
       puts e
       Rails.logger.info e.message
