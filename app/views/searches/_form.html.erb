@@ -2,7 +2,20 @@
   <%= f.error_notification %>
   <div class="form-inputs">
     <%= f.simple_fields_for :terms do |term_form|  %>
-      <%= term_form.input :text, :size => "80", :label => 'Term', :hint => "Search tweets that include this keyword", :input_html => {:style => "width:233px;"} %>
+      <% #raise term_form.object.inspect %>
+      <% type = term_form.object.type.to_s
+         if type == "KeywordTerm"
+           label = 'Keyword / URL'
+           hint = 'Search tweets that include this keyword or URL'
+         elsif type == "HashtagTerm"
+           label = 'Hashtag'
+           hint = 'Search tweets that include this hashtag'
+         else
+           label = 'User'
+           hint = 'Search tweets from this user'
+         end
+       %>
+      <%= term_form.input :text, :size => "80", :label => label, :hint => hint, :input_html => {:style => "width:233px;"} %>
       <%= term_form.hidden_field :type %>
     <% end %>
     <div class="control-group string required">
@@ -12,7 +25,7 @@
         <% to = from - 7 %>
         <%= f.datepicker :from_date, :size => "12", :value => from.to_s %>
         <%= f.datepicker :to_date, :value => to.to_s %>
-        <p class="help-block">Search users matching the terms within this date range</p>
+        <p class="help-block">Search within this date range</p>
       </div>
     </div>
   </div>
