@@ -1,0 +1,20 @@
+<div style="width:95%; margin:0 auto;">
+<table class="table">
+  <thead>
+    <tr>
+      <th>User</th>
+      <th>Influence</th>
+      <th>Outreach</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @presenter.top_influencers.each do |twitter_user| %>
+      <tr>
+        <td><%= twitter_user.handle %></td>
+        <td><%= twitter_user.influence rescue 0 %></td>
+        <td><%= twitter_user.outreach rescue 0 %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+</div>

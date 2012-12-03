@@ -1,0 +1,18 @@
+<div style="width:95%; margin:0 auto;">
+<table class="table">
+  <thead>
+    <tr>
+      <th>User</th>
+      <th># Retweets</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @presenter.top_tweets.each do |tweet| %>
+      <tr>
+        <td><%= tweet.twitter_user.handle %></td>
+        <td><%= tweet.retweet_count rescue 0 %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+</div>

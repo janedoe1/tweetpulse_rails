@@ -1,14 +1,9 @@
+<%- model_class = Tweet -%>
 
+<%= databox("Tweet from @#{@tweet.twitter_user.handle} ") do %>
 
-<%= row do %>
-<%= databox("Tweet from @#{@tweet.twitter_user.handle} ", :class => 'span12') do %>
-  <small class="pull-right" style="padding-top:3px;"><i class='icon-refresh'></i> <%= link_to "Refresh results", refresh_tweet_results_path(@tweet.id) %></small>
-  <% unless @tweet.retweets.blank? %>
-    <div id="chart" style="width:100%; height:550px;"></div>
-  <% else %>
-    There are no retweets matching this search.
-  <% end %>
-<% end %>
+<div id="chart" style="width:100%; height:550px;"></div>
+
 <% end %>
 
 <style type="text/css">

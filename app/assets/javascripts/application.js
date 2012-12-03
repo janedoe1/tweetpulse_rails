@@ -12,10 +12,10 @@
 //
 //= require jquery
 //= require jquery_ujs
+//= require jquery-ui
 //= require jquery.qtip
 //= require twitter/bootstrap
 //= require d3.v2
-//= require sigma.min
-//= require sigma.parseGexf
-//= require sigma.forceatlas2
+//= require bootstrap-datepicker
 //= require_tree .
+

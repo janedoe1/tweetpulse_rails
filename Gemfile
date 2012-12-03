@@ -11,6 +11,8 @@ end
 group :production do
   gem 'pg'
 end
+
+# gem 'mysql2'
 # gem 'sqlite3'
 
 gem 'json'
@@ -39,6 +41,7 @@ gem 'omniauth-twitter'
 gem 'nokogiri'
 gem 'builder'
 gem 'httparty'
+gem 'jquery_datepicker'
 
 # gem 'omniauth'
 

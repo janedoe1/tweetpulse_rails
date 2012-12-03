@@ -1,0 +1,19 @@
+<%= stylesheet_link_tag "application", :media => "all" %>
+<%- model_class = Tweet -%>
+
+<div style="border-bottom:1px solid #999; overflow:auto;">
+  <div style="width:70px; float:left; margin:4px 0 10px;">
+    <%= image_tag @retweet.twitter_user.avatar, :class => "img-polaroid" %>
+  </div>
+  <div style="width:250px; float:left;">
+    <h4 style="margin:0 0 5px 0;"><%= link_to "@#{@retweet.twitter_user.handle}", twitter_user_page(@retweet.twitter_user.handle)  %></h4>
+    <small><%= number_with_delimiter(@retweet.twitter_user.follower_count, :delimiter => ',') %> followers</small><br/>
+    <small><%= number_with_delimiter(@retweet.twitter_user.friend_count, :delimiter => ',') %> following</small>
+  </div>
+</div>
+
+<div style="clear:both;margin-top:10px;"> 
+  <small>Retweeted on <%= tweet_date(@retweet.tweeted_at) %></small>
+  <p style="margin-top:5px; color:black;font-weight: bold">Influence: <%= number_with_delimiter(@retweet.twitter_user.influence, :delimiter => ',') %></p>
+  <p style="color:black;font-weight: bold">Outreach: <%= number_with_delimiter(@retweet.twitter_user.outreach, :delimiter => ',') %></p>
+</div>

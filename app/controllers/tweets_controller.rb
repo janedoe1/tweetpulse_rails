@@ -18,15 +18,23 @@ class TweetsController < ApplicationController
   # GET /tweets/1.json
   def show
     @tweet = Tweet.find(params[:id])
-    begin
-      @data = @tweet.get_data(current_user)
-    rescue Twitter::Error::TooManyRequests
-      flash[:error] = "You have exceeded Twitter's API request limit. Please try again in 15 minutes."
-      redirect_to search_path(@tweet.search)
-    end
+    @retweets = @tweet.retweets.blank? ? @tweet.get_retweets(current_user) : @tweet.retweets
+      if @tweet.retweets.blank?
+        flash[:error] = "No retweets for this tweet."
+      end
+      respond_to do |format|
+        format.html # new.html.erb
+        format.json { render json: @tweet.to_json(current_user) }
+      end
+  
+      # begin
+    #       @data = @tweet.get_data(current_user)
+    #     rescue Twitter::Error::TooManyRequests
+    #       flash[:error] = "You have exceeded Twitter's API request limit. Please try again in 15 minutes."
+    #       redirect_to search_path(@tweet.search)
+    #     end
     #raise @data.inspect
-    data = "[{'name':'flare.analytics.cluster.AgglomerativeCluster','size':3938,'imports':['flare.animate.Transitioner','flare.vis.data.DataList','flare.util.math.IMatrix','flare.analytics.cluster.MergeEdge','flare.analytics.cluster.HierarchicalCluster','flare.vis.data.Data']}]"
-
+    #data = "[{'name':'flare.analytics.cluster.AgglomerativeCluster','size':3938,'imports':['flare.animate.Transitioner','flare.vis.data.DataList','flare.util.math.IMatrix','flare.analytics.cluster.MergeEdge','flare.analytics.cluster.HierarchicalCluster','flare.vis.data.Data']}]"
   end
 
   # GET /tweets/new
@@ -89,9 +97,24 @@ class TweetsController < ApplicationController
     end
   end
   
+  
   def show_tooltip
     @tweet = Tweet.find(params[:tweet_id])
     render :partial => 'tweets/show_tooltip'
     #render :layout => false
   end
+  
+  def refresh_results
+    @tweet = Tweet.find(params[:tweet_id])
+    @tweet.retweets.destroy_all
+    begin
+      @tweet.get_retweets(current_user)
+    rescue Twitter::Error::InternalServerError => e
+      puts e
+      Rails.logger.info e.message
+      flash[:error] = 'Twitter is not responding. Please try again in a few minutes.'
+    end
+    redirect_to tweet_path(@tweet)
+  end
+
 end

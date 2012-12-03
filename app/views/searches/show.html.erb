@@ -1,7 +1,7 @@
 <%= row do %>
-<%= databox("Tweets matching search '#{@search.label}'", :class => 'span12') do %>
+<%= databox("Influencers for search '#{@search.label}' (based on Kred RT Influence API)", :class => 'span12') do %>
   <small class="pull-right" style="padding-top:3px;"><i class='icon-refresh'></i> <%= link_to "Refresh results", refresh_search_results_path(@search.id) %></small>
-  <% unless @search.tweets.blank? %>
+  <% unless @search.twitter_users.blank? %>
     <div id="chart" style="width:100%; height:550px;"></div>
   <% else %>
     There are no tweets matching this search.
@@ -85,7 +85,7 @@ text.shadow {
         .attr("class", "node")
         .attr("r", function(d) { return d.size; })
         .attr("title", function(d) { return d.name; })
-        .attr("detail", function(d) { return d.tweet_tooltip; })
+        .attr("detail", function(d) { return d.twitter_user_tooltip; })
         .attr("color", function(d) { return d.color; })
         .style("fill", function(d) { return d.color; })
         .call(force.drag);
@@ -106,6 +106,16 @@ text.shadow {
         .attr("y", ".31em")
         .style("fill", 'black')
         .text(function(d) { return d.name; });
+        
+/*
+    text.append("svg:image")
+    	.attr("xlink:href", function(d) { return d.avatar; })
+    	.attr("x", -8)
+    	.attr("y", -8)
+    	.attr("width", function(d) { return d.size*3; })
+    	.attr("height", function(d) { return d.size*3; });
+*/
+
         
     force.on("tick", function() {
       nodes[0].x = width / 2;
