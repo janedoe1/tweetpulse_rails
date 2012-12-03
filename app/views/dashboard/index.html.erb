@@ -26,7 +26,7 @@
       <div id="influence-vs-outreach-graph"></div>
     <% end %>
   <% end %>
-  <% unless @presenter.top_tweets %>
+  <% if @presenter.top_tweets %>
     <%= databox("Top Tweets", :class => 'span6', :inner_style => 'padding:0;') do %>
       <%= render :partial => "dashboard/top_tweets" %>
     <% end %>
