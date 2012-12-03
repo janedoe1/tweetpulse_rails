@@ -5,9 +5,10 @@ class DashboardPresenter
   def initialize(current_user, options = {})
     @user = current_user
     @searches = current_user.searches
-    @tweets = @searches.collect {|s| s.tweets}.flatten
+    @search = @user.searches.find(options[:search]) unless options[:search].nil?
+    @tweets = @search.nil? ? @searches.collect {|s| s.tweets}.flatten : @search.tweets
     @sentiments = Sentiment.where("tweet_id in (?)", @tweets.map(&:id))
-    @twitter_users = @searches.collect {|s| s.twitter_users}.flatten
+    @twitter_users = @search.nil? ? @searches.collect {|s| s.twitter_users}.flatten : @search.twitter_users
   end
   
   def sentiment_tweet_count(label)
@@ -15,7 +16,7 @@ class DashboardPresenter
   end
   
   def search_tweet_counts(count=5)
-    @searches.order("created_at DESC").limit(count).collect {|search| %(["#{search.label}", #{(search.tweets.count)}])}
+    #@searches.order("created_at DESC").limit(count).collect {|search| %(["#{search.label}", #{(search.tweets.count)}])}
   end
   
   def top_influencers(count=5)

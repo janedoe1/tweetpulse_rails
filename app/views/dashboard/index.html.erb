@@ -1,5 +1,10 @@
+<div id="dashboard-content">
+  <% default_selected = @search.nil? ? 'all' : @search %>
 <div class="page-header">
-  <h4>Dashboard <%= select_tag "Search", options_from_collection_for_select(@presenter.searches, "id", "label"), :class => "pull-right" %></h4>
+  <h4>Dashboard
+  <%= select_tag "search", options_from_collection_for_select(@presenter.searches, :id, :label, {:selected => default_selected}), :prompt => 'all', :class => "pull-right" %>
+  <%= image_tag 'loading.gif', :id => "loading", :class => "pull-right", :style => "margin:3px 10px 0 0;display:none;"%>
+  </h4>
 </div>
 <%= row do %>
   <%= databox("Sentiment Breakdown", :class => 'span6', :inner_style => 'padding:0;') do %>
@@ -19,10 +24,26 @@
     <%= render :partial => "dashboard/top_tweets" %>
   <% end %>
 <% end %>
+</div>
 
 <script type="text/javascript" src="https://www.google.com/jsapi"></script>
 <script type="text/javascript">
 
+  $(document).ready(function(){
+    $('#search').live('change',function(){
+      var search_id = $(this).val();
+      console.log(search_id);
+      $('#loading').show();
+      $.ajax({
+          url: '/dashboard/' + search_id + '/refresh',
+          success: function(responseData) {
+            $('#loading').hide();
+            $('#dashboard-content').html(responseData);
+            drawChart();
+          }
+      });
+    });
+  })
   // Load the Visualization API and the piechart package.
   google.load('visualization', '1.0', {'packages':['corechart']});
   // Set a callback to run when the Google Visualization API is loaded.
@@ -51,7 +72,7 @@
                  colors: ['#008000', '#ff0000', '#808080'],
                  legend: {position: 'right', alignment: 'center'},
                  pieSliceTextStyle: {color: 'white'},
-                 is3D: true
+                 is3D: false
                  };
   
   var sentiment_chart = new google.visualization.PieChart(document.getElementById('sentiment-graph'));

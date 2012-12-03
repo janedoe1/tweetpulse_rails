@@ -22,6 +22,9 @@ Tweetpulse::Application.routes.draw do
   root :to => 'dashboard#index'
   get "/dashboard", :as => "dashboard", :to => "dashboard#index"
   
+  get "/dashboard/:search_id/refresh", :as => "refresh_dashboard", :to => "dashboard#refresh_graphs"
+  get "/dashboard/refresh", :as => "refresh_dashboard", :to => "dashboard#refresh_graphs"
+  
   get "/searches/:search_id/refresh", :as => "refresh_search_results", :to => "searches#refresh_results"
   get "/tweets/:tweet_id/refresh", :as => "refresh_tweet_results", :to => "tweets#refresh_results"
 

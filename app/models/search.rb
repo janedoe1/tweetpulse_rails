@@ -19,8 +19,7 @@ class Search < ActiveRecord::Base
   # end
   
   #Kred API
-  def get_twitter_users    
-    
+  def get_twitter_users
     app_id = "5e918fed"
     app_key = "0e413b1d6831771be8af2bb2999508db"
 
@@ -29,6 +28,7 @@ class Search < ActiveRecord::Base
     #first = self.from_date
     last = "today" #self.to_date
     count = "30"
+    limit = "100"
 
     url = 'http://api.peoplebrowsr.com/kredretweetinfluence?'
     url = url + 'app_id=' + app_id
@@ -36,8 +36,9 @@ class Search < ActiveRecord::Base
     url = url + '&term=' + term
     url = url + '&source=' + source
     #url = url + "&first=" + self.from_date.strftime("%Y-%m-%d")
-    url = url + "&last=" + self.to_date.strftime("%Y-%m-%d")
+    url = url + "&last=" + last #+ self.to_date.strftime("%Y-%m-%d")
     url = url + "&count=" + count
+    url = url + "&limit=" + limit
     uri = URI.parse(URI.encode(url.strip))
     response = Net::HTTP.get_response(uri)
     #raise JSON.parse(response.body)['data'].inspect
