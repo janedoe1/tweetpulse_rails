@@ -13,3 +13,51 @@ u = User.new(
   :password => 'p4ssw0rd'
 )
 u.save!(:validate => false)
+
+u = User.new(
+  :first_name => "Tan",
+  :last_name => "Li",
+  :email => "tanl@andrew.cmu.edu",
+  :password => 'p4ssw0rd'
+)
+u.save!(:validate => false)
+
+u = User.new(
+  :first_name => "Hui",
+  :last_name => "Sun",
+  :email => "huis@andrew.cmu.edu",
+  :password => 'p4ssw0rd'
+)
+u.save!(:validate => false)
+
+u = User.new(
+  :first_name => "Andi",
+  :last_name => "Wang",
+  :email => "andiw@andrew.cmu.edu",
+  :password => 'p4ssw0rd'
+)
+u.save!(:validate => false)
+
+u = User.new(
+  :first_name => "Xaio",
+  :last_name => "Fu",
+  :email => "xaiof@andrew.cmu.edu",
+  :password => 'p4ssw0rd'
+)
+u.save!(:validate => false)
+
+u = User.new(
+  :first_name => "Dan",
+  :last_name => "Li",
+  :email => "dli1@andrew.cmu.edu",
+  :password => 'p4ssw0rd'
+)
+u.save!(:validate => false)
+
+u = User.new(
+  :first_name => "Evan",
+  :last_name => "Miller",
+  :email => "ewmst5@gmail.com",
+  :password => 'p4ssw0rd'
+)
+u.save!(:validate => false)
