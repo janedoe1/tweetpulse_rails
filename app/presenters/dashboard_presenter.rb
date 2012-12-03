@@ -1,6 +1,6 @@
 class DashboardPresenter
 
-  attr_reader :tag, :graph_min, :graph_max, :searches
+  attr_reader :tag, :graph_min, :graph_max, :searches, :sentiments, :tweets
 
   def initialize(current_user, options = {})
     @user = current_user

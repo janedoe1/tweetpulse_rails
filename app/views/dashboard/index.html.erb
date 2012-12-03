@@ -7,28 +7,36 @@
   </h4>
 </div>
 <%= row do %>
-  <% if @presenter.sentiment_tweet_count %>
-    <%= databox("Sentiment Breakdown", :class => 'span6', :inner_style => 'padding:0;') do %>
+  <%= databox("Sentiment Breakdown", :class => 'span6', :inner_style => 'padding:0;') do %>
+    <% unless @presenter.sentiments.blank? %>
       <div id="sentiment-graph"></div>
+    <% else %>
+      <p style="padding:10px;">There are no sentiment results</p>
     <% end %>
   <% end %>
-  <% if @presenter.top_influencers %>
-    <%= databox("Top Influencers", :class => 'span6', :inner_style => 'padding:0;') do %>
+  <%= databox("Top Influencers", :class => 'span6', :inner_style => 'padding:0;') do %>
+    <% unless @presenter.top_influencers.blank? %>
       <%#= render :partial => "dashboard/top_influencers" %>
       <div id="influencer-graph"></div>
+    <% else %>
+      <p style="padding:10px;">There are no influencer results</p>
     <% end %>
   <% end %>
 <% end %>
 <%= row do %>
-  <% if @presenter.influence_vs_outreach %>
-    <%= databox("Outreach vs. Influence", :class => 'span6', :inner_style => 'padding:0;') do %>
-      <%#= render :partial => "dashboard/top_influencers" %>
+  <%= databox("Outreach vs. Influence", :class => 'span6', :inner_style => 'padding:0;') do %>
+    <% unless @presenter.influence_vs_outreach.blank? %>
+      <%#= render :partial => "dashboard/outreach_vs_influence" %>
       <div id="influence-vs-outreach-graph"></div>
+    <% else %>
+      <p style="padding:10px;">There are no influencer results</p>
     <% end %>
   <% end %>
-  <% if @presenter.top_tweets %>
-    <%= databox("Top Tweets", :class => 'span6', :inner_style => 'padding:0;') do %>
+  <%= databox("Top Tweets", :class => 'span6', :inner_style => 'padding:0;') do %>
+    <% unless @presenter.tweets.blank? %>
       <%= render :partial => "dashboard/top_tweets" %>
+    <% else %>
+      <p style="padding:10px;">There are no tweet results</p>
     <% end %>
   <% end %>
 <% end %>
