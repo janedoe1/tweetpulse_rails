@@ -13,8 +13,6 @@ class Term < ActiveRecord::Base
     ['KeywordTerm', 'HashtagTerm', 'UserTerm']
   end
   
-  
-  
   def get_tweets
   end
   

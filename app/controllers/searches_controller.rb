@@ -100,7 +100,7 @@ class SearchesController < ApplicationController
   def destroy
     @search = current_user.searches.find(params[:id])
     @search.destroy
-
+    flash[:notice] = 'Search was successfully deleted'
     respond_to do |format|
       format.html { redirect_to searches_url }
       format.json { head :no_content }

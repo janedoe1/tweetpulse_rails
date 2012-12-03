@@ -1,7 +1,7 @@
 class TwitterUser < ActiveRecord::Base
   attr_accessible :follower_count, :friend_count, :handle, :location, :user_id, :avatar, :influence, :outreach
 
-  belongs_to :search
+  belongs_to :search, :dependent => :destroy
   has_many :tweets
   has_many :retweets
   
@@ -62,23 +62,24 @@ class TwitterUser < ActiveRecord::Base
   
   # search_query method is wrong!
   def search_query
-  require 'uri'
-    keywords = []
-    hashtags = []
-    self.search.terms.each do |term|
-      if term.type == "KeywordTerm"
-        keywords.push(term.text)
-      elsif term.type == "HashtagTerm"
-        hashtags.push(term.text)
+    require 'uri'
+      keywords = []
+      hashtags = []
+      self.search.terms.each do |term|
+        if term.type == "KeywordTerm"
+          keywords.push(term.text)
+        elsif term.type == "HashtagTerm"
+          hashtags.push(term.text)
+        end
       end
-    end
-    handle = self.handle
-    search = ""
-    search += "from:#{handle}+" unless handle.blank?
-    search += keywords.join("+") if keywords
-    #search += " ##{hashtags.join("+")}" if hashtags
-  search=URI.encode(search)
-  puts search
+      handle = self.handle
+      search = ""
+      search += "from:#{handle}+" unless handle.blank?
+      search += keywords.join("+") if keywords
+      search += " ##{hashtags.join("+")}" if hashtags
+    search=URI.encode(search)
+    search = search + ' -rt'
+    Rails.logger.info "Search query: #{search}"
     search
   end
   

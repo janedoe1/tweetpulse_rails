@@ -7,21 +7,29 @@
   </h4>
 </div>
 <%= row do %>
-  <%= databox("Sentiment Breakdown", :class => 'span6', :inner_style => 'padding:0;') do %>
-    <div id="sentiment-graph"></div>
+  <% if @presenter.sentiment_tweet_count %>
+    <%= databox("Sentiment Breakdown", :class => 'span6', :inner_style => 'padding:0;') do %>
+      <div id="sentiment-graph"></div>
+    <% end %>
   <% end %>
-  <%= databox("Top Influencers", :class => 'span6', :inner_style => 'padding:0;') do %>
-    <%#= render :partial => "dashboard/top_influencers" %>
-    <div id="influencer-graph"></div>
+  <% if @presenter.top_influencers %>
+    <%= databox("Top Influencers", :class => 'span6', :inner_style => 'padding:0;') do %>
+      <%#= render :partial => "dashboard/top_influencers" %>
+      <div id="influencer-graph"></div>
+    <% end %>
   <% end %>
 <% end %>
 <%= row do %>
-  <%= databox("Outreach vs. Influence", :class => 'span6', :inner_style => 'padding:0;') do %>
-    <%#= render :partial => "dashboard/top_influencers" %>
-    <div id="influence-vs-outreach-graph"></div>
+  <% if @presenter.influence_vs_outreach %>
+    <%= databox("Outreach vs. Influence", :class => 'span6', :inner_style => 'padding:0;') do %>
+      <%#= render :partial => "dashboard/top_influencers" %>
+      <div id="influence-vs-outreach-graph"></div>
+    <% end %>
   <% end %>
-  <%= databox("Top Tweets", :class => 'span6', :inner_style => 'padding:0;') do %>
-    <%= render :partial => "dashboard/top_tweets" %>
+  <% unless @presenter.top_tweets %>
+    <%= databox("Top Tweets", :class => 'span6', :inner_style => 'padding:0;') do %>
+      <%= render :partial => "dashboard/top_tweets" %>
+    <% end %>
   <% end %>
 <% end %>
 </div>
@@ -37,9 +45,9 @@
       $.ajax({
           url: '/dashboard/' + search_id + '/refresh',
           success: function(responseData) {
-            $('#loading').hide();
             $('#dashboard-content').html(responseData);
             drawChart();
+            $('#loading').hide();
           }
       });
     });

@@ -23,6 +23,10 @@ module Kred
     def kred_score(params={})
       fetch "kredscore", params
     end
+    
+    def kred_retweet_influence(params={})
+      fetch "kredretweetinfluence", params
+    end
 
     private
       def fetch(page, params={})

@@ -22,27 +22,34 @@ class Search < ActiveRecord::Base
   def get_twitter_users
     app_id = "5e918fed"
     app_key = "0e413b1d6831771be8af2bb2999508db"
-
+    api = Kred::KredAPI.new(app_id, app_key)
+    
     source = "twitter"
     term = self.search_query
     #first = self.from_date
     last = "today" #self.to_date
     count = "30"
     limit = "100"
-
-    url = 'http://api.peoplebrowsr.com/kredretweetinfluence?'
-    url = url + 'app_id=' + app_id
-    url = url + '&app_key=' + app_key
-    url = url + '&term=' + term
-    url = url + '&source=' + source
-    #url = url + "&first=" + self.from_date.strftime("%Y-%m-%d")
-    url = url + "&last=" + last #+ self.to_date.strftime("%Y-%m-%d")
-    url = url + "&count=" + count
-    url = url + "&limit=" + limit
-    uri = URI.parse(URI.encode(url.strip))
-    response = Net::HTTP.get_response(uri)
-    #raise JSON.parse(response.body)['data'].inspect
-    result = JSON.parse(response.body)['data']
+    
+    response = api.kred_retweet_influence(source: source, 
+                               term: term,
+                               last: last,
+                               count: count,
+                               limit: limit)
+    
+    # url = 'http://api.peoplebrowsr.com/kredretweetinfluence?'
+    #     url = url + 'app_id=' + app_id
+    #     url = url + '&app_key=' + app_key
+    #     url = url + '&term=' + term
+    #     url = url + '&source=' + source
+    #     #url = url + "&first=" + self.from_date.strftime("%Y-%m-%d")
+    #     url = url + "&last=" + last #+ self.to_date.strftime("%Y-%m-%d")
+    #     url = url + "&count=" + count
+    #     url = url + "&limit=" + limit
+    #     uri = URI.parse(URI.encode(url.strip))
+    #     response = Net::HTTP.get_response(uri)
+    #     #raise JSON.parse(response.body)['data'].inspect
+    result = response['data']
     result.each do |influencer|
       self.twitter_users.create(
                 :user_id        => influencer['numeric_id'].to_s,
@@ -99,8 +106,9 @@ class Search < ActiveRecord::Base
     handle = self.terms.user_terms.first.text rescue ''
     search = ""
     search += "from:#{handle} " unless handle.blank?
-    search += keywords.join(" ") if keywords
-    search += " ##{hashtags.join(" ")}" unless hashtags
+    search += keywords.join(" ") unless keywords.blank?
+    search += " ##{hashtags.join(" ")}" unless hashtags.blank?
+    Rails.logger.info "Search query: #{search}"
     search
   end
   
