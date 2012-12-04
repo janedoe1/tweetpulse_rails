@@ -61,3 +61,67 @@ u = User.new(
   :password => 'p4ssw0rd'
 )
 u.save!(:validate => false)
+
+u = User.new(
+  :first_name => "Corinne",
+  :last_name => "Sherman",
+  :email => "csherman@ebay.com",
+  :password => 'ebaytester'
+)
+u.save!(:validate => false)
+
+u = User.new(
+  :first_name => "Ziggy",
+  :last_name => "Lin",
+  :email => "zihlin@ebay.com",
+  :password => 'ebaytester'
+)
+u.save!(:validate => false)
+
+u = User.new(
+  :first_name => "Sudha",
+  :last_name => "Jamthe",
+  :email => "sujamthe@ebay.com",
+  :password => 'ebaytester'
+)
+u.save!(:validate => false)
+
+u = User.new(
+  :first_name => "Nirveek",
+  :last_name => "Ide",
+  :email => "nide@ebay.com",
+  :password => 'ebaytester'
+)
+u.save!(:validate => false)
+
+u = User.new(
+  :first_name => "Palm",
+  :last_name => "Norchoovech",
+  :email => "pnorchoovech@ebay.com",
+  :password => 'ebaytester'
+)
+u.save!(:validate => false)
+
+u = User.new(
+  :first_name => "Shubha",
+  :last_name => "Ranganathan",
+  :email => "shranganathan@ebay.com",
+  :password => 'ebaytester'
+)
+u.save!(:validate => false)
+
+u = User.new(
+  :first_name => "Muthu",
+  :last_name => "Sundaresan",
+  :email => "msundaresan@ebay.com",
+  :password => 'ebaytester'
+)
+u.save!(:validate => false)
+
+u = User.new(
+  :first_name => "Ronan",
+  :last_name => "Gillen",
+  :email => "rgillen@ebay.com",
+  :password => 'ebaytester'
+)
+u.save!(:validate => false)

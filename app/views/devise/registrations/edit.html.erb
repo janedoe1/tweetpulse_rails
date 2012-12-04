@@ -12,7 +12,7 @@
       <% if current_user && current_user.twitter_auth %>
         <div class="img-polaroid span5">
           <%= image_tag current_user.twitter_auth.profile_image_url, :class => "img-polaroid pull-left", :style => 'margin:8px 0 0 5px;'%>
-          <div class="caption span4 pull-right">
+          <div class="caption pull-right" style="width:300px;">
             <p style="padding-top:5px;font-size:1.1em;">
               <%= image_tag "https://twitter.com/images/resources/twitter-bird-light-bgs.png", :width => 30 %> Authorized as <%= link_to "@#{current_user.authentications.first.username}", twitter_user_page(current_user.twitter_auth.username) %></p>
             <%= button_to "Deauthorize", authentication_path(current_user.twitter_auth), :method => :delete, :class => 'btn', :style => 'padding:5px 10px; border-radius:3px;' %>
@@ -21,7 +21,7 @@
       <% else %>
         <div class="img-polaroid span5">
           <%= image_tag "https://twitter.com/images/resources/twitter-bird-light-bgs.png", :width => 30, :class => "img-polaroid pull-left" %>
-          <div class="caption span4 pull-right">
+          <div class="caption pull-right" style="width:300px;">
             <p style="padding-top:5px;font-size:1.1em;">
               You have not authorized a Twitter account yet.</p>
             <%= link_to raw("<img src='https://dev.twitter.com/sites/default/files/images_documentation/sign-in-with-twitter-gray.png' />"), twitter_auth_path %>
@@ -34,7 +34,9 @@
         <%= f.error_notification %>
 
         <div class="form-inputs">
-          <%= f.input :email, :required => true, :autofocus => true %>
+          <%= f.input :first_name, :required => true, :autofocus => true %>
+          <%= f.input :last_name, :required => true %>
+          <%= f.input :email, :required => true %>
           <%= f.input :password, :autocomplete => "off", :hint => "Leave blank if not changing", :required => false %>
           <%= f.input :password_confirmation, :required => false %>
           <%= f.input :current_password, :hint => "Enter password to confirm changes", :required => true %>
@@ -47,7 +49,7 @@
         </div>
       <% end %>
 
-      <p>Unhappy? <%= link_to "Delete my account", registration_path(resource_name), :data => { :confirm => "Are you sure?" }, :method => :delete %>.</p>
+      <p><%= link_to "Delete account", registration_path(resource_name), :data => { :confirm => "Are you sure?" }, :method => :delete %>.</p>
     </div>
     
   </div>
