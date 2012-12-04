@@ -4,6 +4,7 @@
     <%= f.simple_fields_for :terms do |term_form|  %>
       <% #raise term_form.object.inspect %>
       <% type = term_form.object.type.to_s
+        append_icon = "@"
          if type == "KeywordTerm"
            label = 'Keyword / URL'
            hint = 'Search tweets that include this keyword or URL'
@@ -15,7 +16,10 @@
            hint = 'Search tweets from this user'
          end
        %>
-      <%= term_form.input :text, :size => "80", :label => label, :hint => hint, :input_html => {:style => "width:233px;"} %>
+       <div class="input-prepend">
+         <span class="add-on"><%= append_icon %></span>
+         <%= term_form.input :text, :size => "80", :label => label, :hint => hint, :input_html => {:style => "width:233px;"} %>
+       </div>
       <%= term_form.hidden_field :type %>
     <% end %>
     <div class="control-group string required">

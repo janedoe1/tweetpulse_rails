@@ -1,7 +1,6 @@
 class TweetsController < ApplicationController
-  
   layout 'application', :except => [:show_tooltip]
-  
+  layout proc {|controller| controller.request.xhr? ? false: "application" }
   
   # GET /tweets
   # GET /tweets.json
@@ -96,7 +95,6 @@ class TweetsController < ApplicationController
       format.json { head :no_content }
     end
   end
-  
   
   def show_tooltip
     @tweet = Tweet.find(params[:tweet_id])

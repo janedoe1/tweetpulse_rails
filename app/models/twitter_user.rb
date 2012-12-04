@@ -20,7 +20,8 @@ class TwitterUser < ActiveRecord::Base
                                  :text => status.text,
                                  :twitter_user_id => self.user_id,
                                  :reply_count => reply_count,
-                                 :tweeted_at => status.created_at)
+                                 :tweeted_at => status.created_at,
+                                 :search_id => self.search_id)
       Sentiment.create(:tweet_id => tweet.id, 
                        :label => sentiment_label(status.text),
                        :negative => sentiment_probability(status.text, "neg"),

@@ -1,50 +1,18 @@
-<div id="dashboard-content">
   <% default_selected = @search.nil? ? 'all' : @search %>
-<div class="page-header">
-  <h4>Dashboard
-  <%= select_tag "search", options_from_collection_for_select(@presenter.searches, :id, :label, {:selected => default_selected}), :prompt => 'all', :class => "pull-right" %>
-  <%= image_tag 'loading.gif', :id => "loading", :class => "pull-right", :style => "margin:3px 10px 0 0;display:none;"%>
-  </h4>
-</div>
-<%= row do %>
-  <%= databox("Sentiment Breakdown", :class => 'span6', :inner_style => 'padding:0;') do %>
-    <% unless @presenter.sentiments.blank? %>
-      <div id="sentiment-graph"></div>
-    <% else %>
-      <p style="padding:10px;">There are no sentiment results</p>
+  <%= row do %>
+    <%= databox("Dashboard", :class => 'span12', :inner_style => 'background:#fff;padding:;min-height:204px;') do %>
+      <%= row do %>
+        <%= select_tag "search", options_from_collection_for_select(@presenter.searches, :id, :label, {:selected => default_selected}), :prompt => 'all', :class => "pull-left" %>
+        <%= image_tag 'loading.gif', :id => "loading", :class => "pull-left", :style => "margin:3px 0 0 10px;display:none;"%>
+      <% end %>
+      <div id="dashboard-content">
+        <%= render :partial => "dashboard/graphs" %>
+      </div>
     <% end %>
   <% end %>
-  <%= databox("Top Influencers", :class => 'span6', :inner_style => 'padding:0;') do %>
-    <% unless @presenter.top_influencers.blank? %>
-      <%#= render :partial => "dashboard/top_influencers" %>
-      <div id="influencer-graph"></div>
-    <% else %>
-      <p style="padding:10px;">There are no influencer results</p>
-    <% end %>
-  <% end %>
-<% end %>
-<%= row do %>
-  <%= databox("Outreach vs. Influence", :class => 'span6', :inner_style => 'padding:0;') do %>
-    <% unless @presenter.influence_vs_outreach.blank? %>
-      <%#= render :partial => "dashboard/outreach_vs_influence" %>
-      <div id="influence-vs-outreach-graph"></div>
-    <% else %>
-      <p style="padding:10px;">There are no influencer results</p>
-    <% end %>
-  <% end %>
-  <%= databox("Top Tweets", :class => 'span6', :inner_style => 'padding:0;') do %>
-    <% unless @presenter.tweets.blank? %>
-      <%= render :partial => "dashboard/top_tweets" %>
-    <% else %>
-      <p style="padding:10px;">There are no tweet results</p>
-    <% end %>
-  <% end %>
-<% end %>
-</div>
 
 <script type="text/javascript" src="https://www.google.com/jsapi"></script>
 <script type="text/javascript">
-
   $(document).ready(function(){
     $('#search').live('change',function(){
       var search_id = $(this).val();
@@ -65,68 +33,4 @@
   // Set a callback to run when the Google Visualization API is loaded.
   google.setOnLoadCallback(drawChart);
 
-
-  // Callback that creates and populates a data table, 
-  // instantiates the pie chart, passes in the data and
-  // draws it.
-  function drawChart() {
-
-  // Create the data table(s).
-  var sentiment_chart_data = new google.visualization.DataTable();
-  sentiment_chart_data.addColumn('string', 'Sentiment');
-  sentiment_chart_data.addColumn('number', 'Number of Tweets');
-  sentiment_chart_data.addRows([
-    ['Positive', <%= @presenter.sentiment_tweet_count('pos') %>],
-    ['Negative', <%= @presenter.sentiment_tweet_count('neg') %>],
-    ['Neutral', <%= @presenter.sentiment_tweet_count('neutral') %>]
-  ]);
-  
-  // Set chart options
-  var sentiment_chart_options = {width:$('#sentiment-graph').width(),
-                 fontName: 'Verdana',
-                 backgroundColor: '#fcfcfc',
-                 colors: ['#008000', '#ff0000', '#808080'],
-                 legend: {position: 'right', alignment: 'center'},
-                 pieSliceTextStyle: {color: 'white'},
-                 is3D: false
-                 };
-  
-  var sentiment_chart = new google.visualization.PieChart(document.getElementById('sentiment-graph'));
-  sentiment_chart.draw(sentiment_chart_data, sentiment_chart_options);
-  
-  var top_influencers_data = google.visualization.arrayToDataTable([
-     ['User', 'Influence'],
-     <%= raw(@presenter.top_influencers * ",") %>
-     ]);
-
-     // Create and draw the visualization.
-     new google.visualization.BarChart(document.getElementById('influencer-graph')).
-         draw(top_influencers_data,
-              {width:$('#influencer-graph').width(),
-               legend: 'none',
-               fontName: 'Verdana',
-               backgroundColor: '#fcfcfc',
-               tooltip: {textStyle:{fontSize:9}},
-               vAxis: {title: 'User'},
-               hAxis: {title: "Influence"}}
-         );
-  var top_influencers_data = google.visualization.arrayToDataTable([
-    ['Influence', 'Outreach'],
-    <%= raw(@presenter.influence_vs_outreach * ",") %>
-    ]);
-
-    // Create and draw the visualization.
-    new google.visualization.ScatterChart(document.getElementById('influence-vs-outreach-graph')).
-        draw(top_influencers_data,
-             {width:$('#influence-vs-outreach-graph').width(),
-              legend: 'none',
-              fontName: 'Verdana',
-              backgroundColor: '#fcfcfc',
-              tooltip: {textStyle:{fontSize:9}},
-              vAxis: {title: 'Influence'},
-              hAxis: {title: "Outreach"}}
-        );
-
-  
-}
 </script>

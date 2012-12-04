@@ -107,6 +107,10 @@
             <div class="span9" style="min-height:600px;">
                <%= bootstrap_flash %>
                <%= yield %>
+               <div id="loading-overlay" style="display:none; position:fixed; left:50%; top:200px; border:2px solid #444; border-radius:3px; background:#fff; padding:20px;">
+                 <%= image_tag 'loading.gif', :id => "loading", :class => "pull-left", :style => "margin:3px 10px 0 0;"%>
+                 <span style="margin-top:5px;">Loading results...</span>
+               </div>
             </div>
           <% else %>
              <%= bootstrap_flash %>

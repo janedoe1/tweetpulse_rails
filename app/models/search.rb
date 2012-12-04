@@ -30,26 +30,15 @@ class Search < ActiveRecord::Base
     last = "today" #self.to_date
     count = "30"
     limit = "100"
-    
+    Rails.logger.info "Calling PeopleBrowsr API..."
     response = api.kred_retweet_influence(source: source, 
                                term: term,
                                last: last,
                                count: count,
                                limit: limit)
-    
-    # url = 'http://api.peoplebrowsr.com/kredretweetinfluence?'
-    #     url = url + 'app_id=' + app_id
-    #     url = url + '&app_key=' + app_key
-    #     url = url + '&term=' + term
-    #     url = url + '&source=' + source
-    #     #url = url + "&first=" + self.from_date.strftime("%Y-%m-%d")
-    #     url = url + "&last=" + last #+ self.to_date.strftime("%Y-%m-%d")
-    #     url = url + "&count=" + count
-    #     url = url + "&limit=" + limit
-    #     uri = URI.parse(URI.encode(url.strip))
-    #     response = Net::HTTP.get_response(uri)
-    #     #raise JSON.parse(response.body)['data'].inspect
     result = response['data']
+    Rails.logger.info "PeopleBrowsr API Results"
+    Rails.logger.info response
     result.each do |influencer|
       self.twitter_users.create(
                 :user_id        => influencer['numeric_id'].to_s,

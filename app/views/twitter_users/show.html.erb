@@ -1,13 +1,15 @@
-<%= row do %>
-<%= databox("Tweets from @#{@twitter_user.handle} matching search '#{@twitter_user.label}'", :class => 'span12') do %>
-  <% unless @twitter_user.tweets.blank? %>
-    <div id="chart" style="width:100%; height:550px;"></div>
-  <% else %>
-    There are no tweets matching this search.
+<div id="twitter-user-graph">
+  <%= row do %>
+    <%= databox("Tweets from @#{@twitter_user.handle} matching search '#{@twitter_user.label}'", :class => 'span12') do %>
+      <small class="pull-right" style="padding-top:3px;"><i class='icon-refresh'></i> <%= link_to "Refresh results", "#", :id => 'refresh-results' %></small>
+      <div id="chart" style="width:100%; height:550px;">
+        <% if @twitter_user.tweets.blank? %>
+          <p style="padding-top:200px;text-align:center;">There are no tweets matching this user</p>
+        <% end %>
+      </div>
+    <% end %>
   <% end %>
-<% end %>
-<% end %>
-
+</div>
 <style type="text/css">
 
 circle.node {
@@ -45,8 +47,32 @@ text.shadow {
   </head>
   <body>
     
-    <script type="text/javascript">
-//$(document).ready(function() {
+<script type="text/javascript">
+
+$(document).ready(function() {
+  var tweet_count = <%= @twitter_user.tweets.count %>;
+  if(tweet_count == 0) {
+    refreshResults();
+  } else {
+    drawChart();
+  }
+  $('#refresh-results').click(function(){
+    refreshResults();
+  });
+})
+
+function refreshResults() {
+  $('#loading-overlay').show();
+  $.ajax({
+      url: '/twitter_users/' + <%= @twitter_user.id.to_s %> + '/refresh',
+      success: function(responseData) {
+        $('#twitter-user-graph').html(responseData);
+        $('#loading-overlay').hide();
+      }
+  });
+}
+
+function drawChart() {
   var width = $('#chart').width(),
       height = $('#chart').height();
       
@@ -63,7 +89,6 @@ text.shadow {
   
   url = "/twitter_users/" + <%= @twitter_user.id.to_s %> + ".json"
   
-  console.log(url);
   d3.json(url, function(json) {
     var nodes = json.nodes
     force
@@ -165,12 +190,7 @@ text.shadow {
         });
       }
       
-    })
-    
-    
+    });
   });
-
-//})
-
-
-    </script>
+}
+</script>

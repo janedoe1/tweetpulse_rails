@@ -1,5 +1,6 @@
 class SearchesController < ApplicationController
   before_filter :check_twitter_auth
+  layout proc {|controller| controller.request.xhr? ? false: "application" }
 #  before_filter :build_gexf, :only => :show
   # GET /searches
   # GET /searches.json
@@ -15,35 +16,12 @@ class SearchesController < ApplicationController
   # GET /searches/1
   # GET /searches/1.json
   def show
-    #@search = current_user.searches.find(params[:id])
-    #@tweets = @search.tweets.blank? ? @search.get_tweets : @search.tweets
-    #if @search.tweets.blank?
-    #  flash[:error] = "No tweets matched this search."
-    #  #redirect_to searches_path
-    #end
-	#respond_to do |format|
-    #  format.html # new.html.erb
-    #  format.json { render json: @search.to_json }
-    #end
-	
-	@search = current_user.searches.find(params[:id])
-    @tweets = @search.twitter_users.blank? ? @search.get_twitter_users : @search.twitter_users
-    if @search.twitter_users.blank?
-      flash[:error] = "No users matched this search."
-      #redirect_to searches_path
-    end
-	respond_to do |format|
+    @search = current_user.searches.find(params[:id])
+    #@twitter_users = @search.twitter_users.blank? ? @search.get_twitter_users : @search.twitter_users
+    respond_to do |format|
       format.html # new.html.erb
       format.json { render json: @search.user_to_json }
     end
-	#@users =  @search.get_users
-	#flash[:error] = @search.get_twitter_users
-	 
-    #respond_to do |format|
-    #  format.html # new.html.erb
-    #  format.json { render json: @search.TwitterUsers }
-    #end
-	
   end
 
   # GET /searches/new
@@ -109,18 +87,20 @@ class SearchesController < ApplicationController
   
   def refresh_results
     @search = current_user.searches.find(params[:search_id])
-    @search.twitter_users.destroy_all
-    begin
-      @search.get_twitter_users
-    rescue Twitter::Error::InternalServerError => e
-      puts e
-      Rails.logger.info e.message
-      flash[:error] = 'Twitter is not responding. Please try again in a few minutes.'
-    end
-    redirect_to search_path(@search)
+    @search.twitter_users.delete_all if @search.twitter_users
+    get_api_matches(@search)
+    render :show
   end
   
   protected
   
+  def get_api_matches search
+    begin
+      search.get_twitter_users
+    rescue => e
+      Rails.logger.info e.message
+      flash[:error] = 'API is not responding. Please try again in a few minutes.'
+    end
+  end
   
 end

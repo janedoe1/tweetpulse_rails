@@ -10,7 +10,7 @@ class DashboardController < ApplicationController
   def refresh_graphs
     @search = params[:search_id]
     prepare_data(@search)
-    render :index, :layout => false
+    render :partial => "dashboard/graphs"
   end
   
   protected

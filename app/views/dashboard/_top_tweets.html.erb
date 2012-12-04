@@ -9,7 +9,7 @@
   <tbody>
     <% @presenter.top_tweets.each do |tweet| %>
       <tr>
-        <td><%= tweet.twitter_user.handle %></td>
+        <td><%= tweet.twitter_user.handle rescue '' %></td>
         <td><%= tweet.retweet_count rescue 0 %></td>
       </tr>
     <% end %>

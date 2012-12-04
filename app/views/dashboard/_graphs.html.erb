@@ -1,0 +1,104 @@
+<%= row do %>
+  <%= databox("Sentiment Breakdown", :class => 'span6', :inner_style => 'padding:0;min-height:204px;') do %>
+      <div id="sentiment-graph"></div>
+    <% if @presenter.sentiments.blank? %>
+      <p style="margin-top:80px;text-align:center;">There are no sentiment results</p>
+    <% end %>
+  <% end %>
+  <%= databox("Top Influencers", :class => 'span6', :inner_style => 'padding:0;min-height:204px;') do %>
+    <% if @presenter.top_influencers %>
+      <%#= render :partial => "dashboard/top_influencers" %>
+      <div id="influencer-graph"></div>
+    <% else %>
+      <p style="margin-top:80px;text-align:center;">There are no influencer results</p>
+    <% end %>
+  <% end %>
+<% end %>
+<%= row do %>
+  <%= databox("Outreach vs. Influence", :class => 'span6', :inner_style => 'padding:0;min-height:204px;') do %>
+    <% if @presenter.influence_vs_outreach %>
+      <%#= render :partial => "dashboard/outreach_vs_influence" %>
+      <div id="influence-vs-outreach-graph"></div>
+    <% else %>
+      <p style="margin-top:80px;text-align:center;">There are no influencer results</p>
+    <% end %>
+  <% end %>
+  <%= databox("Top Tweets", :class => 'span6', :inner_style => 'padding:0;min-height:204px;') do %>
+    <% unless @presenter.tweets.count == 0 %>
+      <%= render :partial => "dashboard/top_tweets" %>
+    <% else %>
+      <p style="margin-top:80px;text-align:center;">There are no tweet results</p>
+    <% end %>
+  <% end %>
+<% end %>
+
+<script>
+function drawChart() {
+  var tweets = <%= @presenter.tweets.count %>
+  var influencers = <%= @presenter.top_influencers.count %>
+  var sentiments = <%= @presenter.sentiments.count %>
+  
+  if (sentiments > 0) {
+    // Create the data table(s).
+    var sentiment_chart_data = new google.visualization.DataTable();
+    sentiment_chart_data.addColumn('string', 'Sentiment');
+    sentiment_chart_data.addColumn('number', 'Number of Tweets');
+    sentiment_chart_data.addRows([
+      ['Positive', <%= @presenter.sentiment_tweet_count('pos') %>],
+      ['Negative', <%= @presenter.sentiment_tweet_count('neg') %>],
+      ['Neutral', <%= @presenter.sentiment_tweet_count('neutral') %>]
+    ]);
+
+    // Set chart options
+    var sentiment_chart_options = {width:$('#sentiment-graph').width(),
+                   fontName: 'Verdana',
+                   backgroundColor: '#fcfcfc',
+                   colors: ['#008000', '#ff0000', '#808080'],
+                   legend: {position: 'right', alignment: 'center'},
+                   pieSliceTextStyle: {color: 'white'},
+                   is3D: false
+                   };
+
+    var sentiment_chart = new google.visualization.PieChart(document.getElementById('sentiment-graph'));
+    sentiment_chart.draw(sentiment_chart_data, sentiment_chart_options);
+  }
+  
+  if (influencers > 0) {
+    var top_influencers_data = google.visualization.arrayToDataTable([
+     ['User', 'Influence'],
+     <%= raw(@presenter.top_influencers * ",") %>
+     ]);
+     // Create and draw the visualization.
+     new google.visualization.BarChart(document.getElementById('influencer-graph')).
+         draw(top_influencers_data,
+              {width:$('#influencer-graph').width(),
+               legend: 'none',
+               fontName: 'Verdana',
+               backgroundColor: '#fcfcfc',
+               tooltip: {textStyle:{fontSize:9}},
+               vAxis: {title: 'User'},
+               hAxis: {title: "Influence"}}
+               );
+  }
+  
+  if (influencers > 0) {
+    var top_influencers_data = google.visualization.arrayToDataTable([
+      ['Influence', 'Outreach'],
+      <%= raw(@presenter.influence_vs_outreach * ",") %>
+      ]);
+
+    // Create and draw the visualization.
+    new google.visualization.ScatterChart(document.getElementById('influence-vs-outreach-graph')).
+        draw(top_influencers_data,
+             {width:$('#influence-vs-outreach-graph').width(),
+              legend: 'none',
+              fontName: 'Verdana',
+              backgroundColor: '#fcfcfc',
+              tooltip: {textStyle:{fontSize:9}},
+              vAxis: {title: 'Influence'},
+              hAxis: {title: "Outreach"}}
+        );
+  }
+
+}
+</script>

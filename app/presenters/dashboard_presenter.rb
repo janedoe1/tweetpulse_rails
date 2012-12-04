@@ -20,20 +20,20 @@ class DashboardPresenter
   end
   
   def top_influencers(count=5)
-    #TwitterUser.order("influence DESC").limit(count)
-    TwitterUser.order("influence DESC").limit(count).collect {|twitter_user| %(["@#{twitter_user.handle}", #{(twitter_user.influence)}])}
+    self.influencers(count).collect {|twitter_user| %(["@#{twitter_user.handle}", #{(twitter_user.influence)}])}
   end
   
   def influence_vs_outreach(count=10)
-    TwitterUser.order("influence DESC").limit(count).collect {|twitter_user| %([#{twitter_user.outreach}, #{(twitter_user.influence)}])}
+    self.influencers(count).collect {|twitter_user| %([#{twitter_user.outreach}, #{(twitter_user.influence)}])}
   end
   
   def top_tweets(count=5)
-    Tweet.find(:all, :select => 'tweets.*, count(retweets.id) as retweet_count',
-                 :joins => 'left outer join retweets on retweets.tweet_id = tweets.id',
-                 :group => 'tweets.id',
-                 :order => 'retweet_count ASC').take(count)
-    #@tweets.collect {|t| t.retweets.count }
+    Tweet.find(@tweets.map(&:id)).sort_by {|t| t.retweets.count}.take(count)
   end
   
+  protected
+  
+  def influencers(count=5)
+    TwitterUser.find(@twitter_users.map(&:id), :order => "influence DESC").take(count)
+  end
 end
