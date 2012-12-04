@@ -22,18 +22,19 @@
          <span class="add-on"><%= append_icon %></span>
          <%= term_form.input_field :text %>
        <% end %>
+
       <%= term_form.hidden_field :type %>
     <% end %>
-    <!-- <div class="control-group string required">
-         <label class="control-label required">Date Range</label>
-         <div class="controls"> -->
-        <%# from = Date.today %>
-        <%# to = from - 7 %>
-        <%#= f.datepicker :from_date, :size => "12", :value => from.to_s %>
-        <%#= f.datepicker :to_date, :value => to.to_s %>
-        <!-- <p class="help-block">Search within this date range</p> -->
-      <!-- </div> -->
-    <!-- </div> -->
+    <div class="control-group string required" style="display:none;">
+      <label class="control-label required">Date Range</label>
+      <div class="controls">
+        <% from = Date.today %>
+        <% to = from - 7 %>
+        <%= f.datepicker :from_date, :size => "12", :value => from.to_s %>
+        <%= f.datepicker :to_date, :value => to.to_s %>
+        <p class="help-block">Search within this date range</p>
+      </div>
+    </div>
   </div>
   <div class="form-actions">
     <%= f.button :submit, :class => 'btn-primary' %>
