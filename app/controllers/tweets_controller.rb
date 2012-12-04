@@ -17,23 +17,12 @@ class TweetsController < ApplicationController
   # GET /tweets/1.json
   def show
     @tweet = Tweet.find(params[:id])
-    @retweets = @tweet.retweets.blank? ? @tweet.get_retweets(current_user) : @tweet.retweets
-      if @tweet.retweets.blank?
-        flash[:error] = "No retweets for this tweet."
-      end
-      respond_to do |format|
-        format.html # new.html.erb
-        format.json { render json: @tweet.to_json(current_user) }
-      end
-  
-      # begin
-    #       @data = @tweet.get_data(current_user)
-    #     rescue Twitter::Error::TooManyRequests
-    #       flash[:error] = "You have exceeded Twitter's API request limit. Please try again in 15 minutes."
-    #       redirect_to search_path(@tweet.search)
-    #     end
-    #raise @data.inspect
-    #data = "[{'name':'flare.analytics.cluster.AgglomerativeCluster','size':3938,'imports':['flare.animate.Transitioner','flare.vis.data.DataList','flare.util.math.IMatrix','flare.analytics.cluster.MergeEdge','flare.analytics.cluster.HierarchicalCluster','flare.vis.data.Data']}]"
+    #@retweets = @tweet.retweets.blank? ? @tweet.get_retweets(current_user) : @tweet.retweets
+
+    respond_to do |format|
+      format.html # new.html.erb
+      format.json { render json: @tweet.to_json(current_user) }
+    end
   end
 
   # GET /tweets/new
@@ -111,6 +100,10 @@ class TweetsController < ApplicationController
       puts e
       Rails.logger.info e.message
       flash[:error] = 'Twitter is not responding. Please try again in a few minutes.'
+    rescue Twitter::Error::NotFound => e
+      puts e
+      Rails.logger.info e.message
+      flash[:error] = 'Twitter page not found.'
     end
     redirect_to tweet_path(@tweet)
   end
