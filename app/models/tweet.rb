@@ -1,5 +1,5 @@
 class Tweet < ActiveRecord::Base
-  attr_accessible :tweet_id, :text, :twitter_user_id, :reply_count, :tweeted_at, :search_id
+  attr_accessible :status_id, :text, :twitter_user_id, :reply_count, :tweeted_at, :search_id
   
   belongs_to :search
   belongs_to :twitter_user
@@ -11,18 +11,18 @@ class Tweet < ActiveRecord::Base
   scope :neutral, where(:is_enabled => true, :is_archived => false)
   
   def get_data current_user
-    tweet = current_user.twitter.status(self.tweet_id, :include_entities => true)
+    tweet = current_user.twitter.status(self.status_id, :include_entities => true)
     {:retweeters_count => tweet.retweeters_count,
      :repliers_count   => tweet.repliers_count,
      :followers_count  => tweet.user.followers_count,
      :friends_count    => tweet.user.friends_count,
-     :retweets         => current_user.twitter.retweets(self.tweet_id)}
+     :retweets         => current_user.twitter.retweets(self.status_id)}
   end
   
   def get_retweets current_user
     # search retweets using associated terms
     # client = Twitter::Client.new
-    current_user.twitter.retweets(self.tweet_id, :count => 29).map do |status|    
+    current_user.twitter.retweets(self.status_id, :count => 29).map do |status|    
     
       app_id = "5e918fed"
       app_key = "0e413b1d6831771be8af2bb2999508db"
@@ -62,7 +62,7 @@ class Tweet < ActiveRecord::Base
                              :outreach       => outreach,
                              :influence      => influence,
                              :location       => status.user.location)
-      retweet = self.retweets.create(:tweet_id => status.user.id,
+      retweet = self.retweets.create(:status_id => status.user.id,
                    :twitter_user_id => t.id,
                    :tweeted_at => status.created_at)
     end

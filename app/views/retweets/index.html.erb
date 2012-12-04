@@ -15,7 +15,7 @@
     <% @tweets.each do |tweet| %>
       <tr>
         <td><%= link_to tweet.id, tweet_path(tweet) %></td>
-        <td><%= tweet.tweet_id %></td>
+        <td><%= tweet.status_id %></td>
         <td><%=l tweet.created_at %></td>
         <td>
           <%= link_to t('.edit', :default => t("helpers.links.edit")),

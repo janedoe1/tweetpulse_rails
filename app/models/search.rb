@@ -61,7 +61,7 @@ class Search < ActiveRecord::Base
                              :friend_count   => status.user.friends_count,
                              :location       => status.user.location)
       reply_count = status.reply_count.nil? ? 0 : status.reply_count
-      tweet = self.tweets.create(:tweet_id => status.id,
+      tweet = self.tweets.create(:status_id => status.id,
                                  :text => status.text,
                                  :twitter_user_id => t.id,
                                  :reply_count => reply_count,
