@@ -5,31 +5,17 @@ class TwitterUser < ActiveRecord::Base
   has_many :tweets
   has_many :retweets
   
-  
   def get_tweets current_user
-    # search twitter using associated terms
-  
-    current_user.twitter.search(self.search_query, :count => 29).results.map do |status|
-#      t = TwitterUser.create(:user_id        => status.user.id,
-#                             :handle         => status.from_user,
-#                             :follower_count => status.user.followers_count,
-#                             :friend_count   => status.user.friends_count,
-#               :location       => status.user.location)
+      current_user.twitter.search(self.search_query, :count => 29).results.map do |status|
       reply_count = status.reply_count.nil? ? 0 : status.reply_count
-      tweet = self.tweets.create(:tweet_id => status.id,
+      tweet = self.tweets.create(:status_id => status.id,
                                  :text => status.text,
                                  :twitter_user_id => self.user_id,
                                  :reply_count => reply_count,
                                  :tweeted_at => status.created_at,
                                  :search_id => self.search_id)
       Sentiment.create(:tweet_id => tweet.id, 
-                       :label => sentiment_label(status.text),
-                       :negative => sentiment_probability(status.text, "neg"),
-                       :positive => sentiment_probability(status.text, "pos"),
-                       :neutral => sentiment_probability(status.text, "neutral") )
-      #if status.retweet_count > 0
-        # get the retweets
-      # => end
+                       :label => tweet.sentiment_label)
     end
     self.tweets
   end
@@ -37,27 +23,42 @@ class TwitterUser < ActiveRecord::Base
   def label
     self.terms.collect {|t| t.to_s}.join(" ")
   end
-    
+  
   def sentiment_api_url
-    'http://text-processing.com/api/sentiment/'
-    #"http://www.sentiment140.com/api/classify?text="
+    #'http://text-processing.com/api/sentiment/'
+    email = URI.encode("kconarro@andrew.cmu.edu")
+    "http://www.sentiment140.com/api/classify?app_id=#{email}&"
   end
   
   def get_sentiment(text)
-    HTTParty.post(sentiment_api_url, :body => "text=#{text}", :headers => {'Content-Type' => 'application/json'}).parsed_response
-    #HTTParty.get(sentiment_api_url+text, :headers => {'Content-Type' => 'application/json'}).parsed_response
+    #HTTParty.post(sentiment_api_url, :body => "text=#{text}", :headers => {'Content-Type' => 'application/json'}).parsed_response
+    tweet_text = URI.encode(text.gsub(' ', '+'))
+    query_text = URI.encode(self.search.label.gsub(' ', '+'))
+    url = sentiment_api_url+"text=#{tweet_text}&query=#{query_text}"
+    #raise url.inspect
+    response = HTTParty.get(url, :headers => {'Content-Type' => 'application/json'}).parsed_response
+    Rails.logger.info "Sentiment API Results"
+    Rails.logger.info response
+    response
   end
   
-  def sentiment_label(text)
-    get_sentiment(text)["label"]
-    # case get_sentiment(text)["results"]["polarity"]
-    # when 0
-    #   'neg'
-    # when 4
-    #   'pos'
-    # else
-    #   'neutral'
-    # end
+  def tweet_range
+    tweets = self.tweets.order("tweeted_at DESC")
+    from = tweets.first.tweeted_at.strftime("%h. %d at %I:%M%p")
+    to = tweets.last.tweeted_at.strftime("%h. %d at %I:%M%p")
+    "#{from} - #{to}"
+  end
+  
+  def sentiment_label
+    #get_sentiment(text)["label"]
+    case get_sentiment(text)["results"]["polarity"]
+    when 0
+      'neg'
+    when 4
+      'pos'
+    else
+      'neutral'
+    end
   end
   
   
@@ -85,7 +86,8 @@ class TwitterUser < ActiveRecord::Base
   end
   
   def sentiment_probability(text, category)
-    get_sentiment(text)["probability"][category]
+    0
+    #get_sentiment(text)["probability"][category]
   end
   
   def label

@@ -67,6 +67,10 @@ function refreshResults() {
         $('#search-graph').html(responseData);
         $('#loading-overlay').hide();
       }
+      error: function() {
+        $('#loading-overlay').hide();
+        alert("There was an error refreshing the results");
+      } 
   });
 }
 

@@ -16,7 +16,7 @@
   $(document).ready(function(){
     $('#search').live('change',function(){
       var search_id = $(this).val();
-      console.log(search_id);
+
       $('#loading').show();
       $.ajax({
           url: '/dashboard/' + search_id + '/refresh',
