@@ -83,3 +83,12 @@
   margin-bottom:-16px;
   font-size:.85em;
 }
+
+.graph-metadata {
+  padding: 5px 10px;
+  background: #999;
+  color: #fefefe;
+  text-shadow: 0 1px #444;
+  border-radius: 3px;
+  border: 1px solid gray;
+}

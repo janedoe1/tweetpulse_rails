@@ -74,6 +74,16 @@ class TwitterUser < ActiveRecord::Base
     data.to_json
   end
   
+  def to_csv
+    col_header = ["status_id", "tweeted_at", "text", "reply_count"]
+    CSV.generate do |csv|
+      csv << col_header
+      self.tweets.each do |tweet|
+        csv << tweet.attributes.values_at(*col_header)
+      end
+    end
+  end
+  
   def normalize val
     unless min_node_size == max_node_size
       xmin = min_node_size

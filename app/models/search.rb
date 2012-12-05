@@ -138,6 +138,16 @@ class Search < ActiveRecord::Base
     data.to_json
   end
   
+  def to_csv
+    col_header = ["user_id", "handle", "follower_count", "friend_count", "influence", "outreach"]
+    CSV.generate do |csv|
+      csv << col_header
+      self.twitter_users.each do |twitter_user|
+        csv << twitter_user.attributes.values_at(*col_header)
+      end
+    end
+  end
+  
   def sentiment_color tweet
     case tweet.sentiment.label
     when 'pos'

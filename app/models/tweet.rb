@@ -62,6 +62,17 @@ class Tweet < ActiveRecord::Base
     data.to_json
   end
   
+  def to_csv
+    col_header = ["original_status_id", "retweeted by", "retweeted_at"]
+    rows = []
+    CSV.generate do |csv|
+      csv << col_header
+      self.retweets.each do |retweet|
+        csv << [self.status_id, retweet.twitter_user.handle, retweet.tweeted_at]
+      end
+    end
+  end
+  
   def sentiment_api_url
     #'http://text-processing.com/api/sentiment/'
     email = URI.encode("kconarro@andrew.cmu.edu")

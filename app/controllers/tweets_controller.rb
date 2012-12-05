@@ -22,6 +22,7 @@ class TweetsController < ApplicationController
     respond_to do |format|
       format.html # new.html.erb
       format.json { render json: @tweet.to_json(current_user) }
+      format.csv { send_data @tweet.to_csv, :filename => "@#{@tweet.twitter_user.handle} retweet export - TweetPulse" }
     end
   end
 

@@ -21,6 +21,7 @@ class SearchesController < ApplicationController
     respond_to do |format|
       format.html # new.html.erb
       format.json { render json: @search.user_to_json }
+      format.csv { send_data @search.to_csv, :filename => "#{@search.label} search export - TweetPulse" }
     end
   end
 

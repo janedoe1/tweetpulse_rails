@@ -36,6 +36,7 @@ Tweetpulse::Application.routes.draw do
   get "/twitter_users/:twitter_user_id/tooltip", :as => "twitter_user_tooltip", :to => "twitter_users#show_tooltip"
   get "/retweets/:id/tooltip", :as => "retweet_tooltip", :to => "retweets#show_tooltip"
   
+  get "/searches/:id/download", :as => "csv_search", :to => "searches#show", :constraints => {:format => /(csv)/}
   # The priority is based upon order of creation:
   # first created -> highest priority.
 
