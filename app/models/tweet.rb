@@ -22,7 +22,6 @@ class Tweet < ActiveRecord::Base
   end
   
   def get_retweets current_user
-    raise Twitter::Error::TooManyRequests
     # search retweets using associated terms
     # client = Twitter::Client.new
     current_user.twitter.retweets(self.status_id, :count => 29).map do |status|
