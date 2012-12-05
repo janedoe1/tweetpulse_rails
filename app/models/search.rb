@@ -1,5 +1,5 @@
 class Search < ActiveRecord::Base
-  attr_accessible :user_id, :terms_attributes, :search_id, :from_date, :to_date
+  attr_accessible :user_id, :terms_attributes, :search_id, :from_date, :to_date, :count
   belongs_to :user
   has_and_belongs_to_many :terms
   has_many :tweets
@@ -7,17 +7,8 @@ class Search < ActiveRecord::Base
   
   accepts_nested_attributes_for :terms, :twitter_users, :reject_if => lambda { |a| a[:text].blank? }
   validates_presence_of :from_date, :to_date
-  
-  # def autosave_associated_records_for_terms
-  #   i = 0
-  #   terms.each do |term|
-  #     t = term.type.constantize.find_or_create_by_text(term.text)
-  #     self.terms.push(t)
-  #     Rails.logger.info("iteration number #{i}")
-  #     i += 1
-  #   end
-  # end
-  
+  validates :count, :numericality => { :greater_than => 0 }
+
   #Kred API
   def get_twitter_users
     app_id = "5e918fed"
@@ -29,13 +20,13 @@ class Search < ActiveRecord::Base
     #first = self.from_date
     last = "today" #self.to_date
     count = "30"
-    limit = "100"
+    number = "50"
     Rails.logger.info "Calling PeopleBrowsr API..."
     response = api.kred_retweet_influence(source: source, 
                                term: term,
                                last: last,
                                count: count,
-                               limit: limit)
+                               number: number)
     result = response['data']
     Rails.logger.info "PeopleBrowsr API Results"
     Rails.logger.info response

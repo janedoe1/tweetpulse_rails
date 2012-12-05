@@ -76,7 +76,7 @@ function refreshResults() {
         $('#twitter-user-graph').html(responseData);
         $('#loading-overlay').hide();
       },
-      error: function(result) { defaultAjaxErrorHandler(responseData, true); }
+      error: function(result) { defaultAjaxErrorHandler(result, true); }
   });
 }
 

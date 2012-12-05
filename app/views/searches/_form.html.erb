@@ -25,6 +25,9 @@
 
       <%= term_form.hidden_field :type %>
     <% end %>
+    <div class="form-inputs">
+      <%= f.input :count, :required => true, :label => "Results Count", :hint => "Return this number of matching results", :input_html => { :value => '50' } %>
+    </div>
     <div class="control-group string required" style="display:none;">
       <label class="control-label required">Date Range</label>
       <div class="controls">

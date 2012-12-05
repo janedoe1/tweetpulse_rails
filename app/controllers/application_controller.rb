@@ -1,7 +1,7 @@
 class ApplicationController < ActionController::Base
   protect_from_forgery
   before_filter :authenticate_user!
-  rescue_from Exception, :with => :handler_exception
+  rescue_from Twitter::Error::TooManyRequests, :with => :handler_exception
   
   def check_twitter_auth
     unless !!current_user.authentications.find_by_provider('twitter')
@@ -13,7 +13,7 @@ class ApplicationController < ActionController::Base
   def handler_exception(exception)
     if request.xhr?
       if exception.class == Twitter::Error::TooManyRequests
-        message = "Twitter API limit reached. Please try again in a few minutes."
+        message = "Twitter API limit reached.<br/>Please try again in a few minutes."
       else
         message = "Error: #{exception.class.to_s}"
         message += " in #{request.parameters['controller'].camelize}Controller" if request.parameters['controller']

@@ -25,6 +25,7 @@ function defaultAjaxErrorHandler(result, isAjaxError) {
   // var errorToken = "Error:";
   //alert(result.responseText);
   $('#loading-overlay').html(result.responseText);
+  $('#loading-overlay').attr('class', 'alert alert-danger');
   $('#loading-overlay').delay(4000).fadeOut(2000);
   // if(!isUndefinedOrNull(result) && !isUndefinedOrNull(result.responseText)) {
   //     // localhost

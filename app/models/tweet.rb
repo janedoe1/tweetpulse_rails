@@ -1,6 +1,8 @@
 class Tweet < ActiveRecord::Base
   attr_accessible :status_id, :text, :twitter_user_id, :reply_count, :tweeted_at, :search_id
   
+  validates_uniqueness_of :status_id
+  
   belongs_to :search
   belongs_to :twitter_user
   has_one :sentiment
