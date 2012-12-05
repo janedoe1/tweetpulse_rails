@@ -48,13 +48,13 @@ ActiveRecord::Schema.define(:version => 20121205062418) do
   end
 
   create_table "sentiments", :force => true do |t|
-    t.integer  "tweet_id"
     t.string   "label"
     t.float    "negative"
     t.float    "positive"
     t.float    "neutral"
     t.datetime "created_at", :null => false
     t.datetime "updated_at", :null => false
+    t.integer  "tweet_id"
   end
 
   create_table "terms", :force => true do |t|

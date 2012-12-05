@@ -57,7 +57,7 @@ class Tweet < ActiveRecord::Base
     # set root node
     data[:nodes].push({:name => self.twitter_user.handle, :size => 20, :color => 'white'})
     self.retweets.map {|retweet| data[:nodes].push({:name => "@" + retweet.twitter_user.handle, :size =>normalize(retweet.twitter_user.follower_count) , :color => self.sentiment_color, :tweet_tooltip => Rails.application.routes.url_helpers.retweet_tooltip_path(retweet)})}
-    self.retweets.map.with_index {|retweet, index| data[:links].push({:source => 0, :target => index+1, :value => index, :size => 1,:length=> 400-length_normalize(Time.now-retweet.tweeted_at)})}
+    self.retweets.map.with_index {|retweet, index| data[:links].push({:source => 0, :target => index+1, :value => index, :size => thickness(self.twitter_user, retweet.twitter_user),:length=> 400-length_normalize(Time.now-retweet.tweeted_at)})}
     Rails.logger.info data
     data.to_json
   end
@@ -124,6 +124,20 @@ class Tweet < ActiveRecord::Base
     #y = 1 + (x-A)*(10-1)/(B-A)
     #norm_min + (val-xmin) * (norm_range.to_f / xrange)
   end
+
+  #thickness
+  def thickness (center_user, leaf_user)
+      center_inf = center_user.influence.to_f
+      center_outr = center_user.outreach.to_f
+      leaf_inf = leaf_user.influence.to_f
+      leaf_outr = leaf_user.outreach.to_f
+
+      factor = (leaf_inf/center_inf)*(leaf_outr/center_outr)
+
+      t = 10*factor
+      return t
+
+    end
   
   def user_node_size
     self.retweets.first.twitter_user.follower_count
