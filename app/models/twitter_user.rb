@@ -9,16 +9,14 @@ class TwitterUser < ActiveRecord::Base
     self.search.tweets.destroy_all
     current_user.twitter.search(self.search_query, :count => 100).results.map do |status|
       reply_count = status.reply_count.nil? ? 0 : status.reply_count
-      if Tweet.find_by_status_id(status.id).nil?
-        tweet = self.tweets.create(:status_id => status.id,
-                                   :text => status.text,
-                                   :twitter_user_id => self.user_id,
-                                   :reply_count => reply_count,
-                                   :tweeted_at => status.created_at,
-                                   :search_id => self.search_id)
-        Sentiment.create(:tweet_id => tweet.id, 
-                         :label => tweet.sentiment_label)
-      end
+      tweet = self.tweets.create(:status_id => status.id.to_s,
+                                 :text => status.text,
+                                 :twitter_user_id => self.user_id,
+                                 :reply_count => reply_count,
+                                 :tweeted_at => status.created_at,
+                                 :search_id => self.search_id)
+      Sentiment.create(:tweet_id => tweet.id, 
+                       :label => tweet.sentiment_label)
     end
     self.tweets
   end
