@@ -10,7 +10,7 @@
         <% if @twitter_user.tweets.blank? %>
           <p style="padding-top:200px;text-align:center;">
             There are no tweets matching this user.
-            <small><a href="#" rel="tooltip" data-html="true" title="While our user search has years of data, our tweet search is limited by Twitter's Search API constraints. <br/><br/>This may cause some searches to have user results but no tweet results." data-placement="right" data-trigger='click'>Why not?</a></small>
+            <small><a href="#" class="no-results" rel="tooltip" data-html="true" title="While our user search has years of data, our tweet search is limited by Twitter's Search API constraints. <br/><br/>This may cause some searches to have user results but no tweet results." data-placement="right" data-trigger='click'>Why?</a></small>
           </p>
         <% end %>
       </div>
@@ -76,7 +76,10 @@ function refreshResults() {
         $('#twitter-user-graph').html(responseData);
         $('#loading-overlay').hide();
       },
-      error: function(result) { defaultAjaxErrorHandler(result, true); }
+      error: function(result) {
+        $('.no-results').tooltip();
+        defaultAjaxErrorHandler(result, true); 
+      }
   });
 }
 

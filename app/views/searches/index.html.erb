@@ -6,7 +6,7 @@
   <thead>
     <tr>
       <th><%= model_class.human_attribute_name(:search) %></th>
-      <th><%= model_class.human_attribute_name(:date_range) %></th>
+      <th><%= model_class.human_attribute_name(:results_count) %></th>
       <th><%= model_class.human_attribute_name(:created_on) %></th>
       <th><%=t '.actions', :default => t("helpers.actions") %></th>
     </tr>
@@ -15,7 +15,8 @@
     <% @searches.each do |search| %>
       <tr>
         <td><%= link_to truncate(search.label, :length => 30), search_path(search) %></td>
-        <td><%= "#{search.from_date.strftime("%b %d, %Y")} - #{search.to_date.strftime("%b %d, %Y")}" %></td>
+        <%#= "#{search.from_date.strftime("%b %d, %Y")} - #{search.to_date.strftime("%b %d, %Y")}" %>
+        <td><%= search.count %></td>
         <td><%= search.created_at.strftime("%b %d, %Y") %></td>
         <td>
           <%= link_to t('.edit', :default => t("helpers.links.edit")),

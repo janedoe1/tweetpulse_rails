@@ -121,7 +121,7 @@ class Search < ActiveRecord::Base
   def user_to_json
   data = {:nodes => [], :links => []}
     # set root node
-    data[:nodes].push({:name => self.label, :size => normalize(max_node_size), :color => 'white'}) 
+    data[:nodes].push({:name => self.label, :size => 20, :color => 'white'}) 
     self.twitter_users.map {|twitteruser| data[:nodes].push({:name => "@" + twitteruser.handle, :size => normalize(twitteruser.follower_count), :color => 'black',:avatar =>twitteruser.avatar,:twitter_user_tooltip => Rails.application.routes.url_helpers.twitter_user_tooltip_path(twitteruser)})}
     self.twitter_users.map.with_index {|tweet, index| data[:links].push({:source => 0, :target => index+1, :value => index, :size => 1})}
     Rails.logger.info data

@@ -1,6 +1,6 @@
 class DashboardPresenter
 
-  attr_reader :tag, :graph_min, :graph_max, :searches, :sentiments, :tweets
+  attr_reader :tag, :graph_min, :graph_max, :searches, :sentiments, :tweets, :twitter_users
 
   def initialize(current_user, options = {})
     @user = current_user
@@ -23,11 +23,11 @@ class DashboardPresenter
     self.influencers(count).collect {|twitter_user| %(["@#{twitter_user.handle}", #{(twitter_user.influence)}])}
   end
   
-  def influence_vs_outreach(count=10)
-    self.influencers(count).collect {|twitter_user| %([#{twitter_user.outreach}, #{(twitter_user.influence)}])}
+  def influence_vs_outreach(count=20)
+    self.influencers(count).collect {|twitter_user| %([#{twitter_user.influence}, #{(twitter_user.outreach)},"@#{twitter_user.handle} Influence: #{twitter_user.influence} Outreach: #{twitter_user.outreach}"])}
   end
   
-  def top_tweets(count=5)
+  def top_tweets(count=4)
     Tweet.find(@tweets.map(&:id)).sort_by {|t| t.retweets.count}.take(count)
   end
   

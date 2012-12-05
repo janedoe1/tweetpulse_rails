@@ -52,8 +52,8 @@ class SearchesController < ApplicationController
       redirect_to @search
     else
       Rails.logger.debug @search.errors.full_messages.join("\n")
-      flash[:error] = 'Search was not created.'
-      redirect_to dashboard_path
+      flash[:error] = "#{@search.errors.full_messages.join("\n")}"
+      redirect_to new_search_path
     end
   end
 
@@ -61,7 +61,6 @@ class SearchesController < ApplicationController
   # PUT /search/1.json
   def update
     @search = current_user.searches.find(params[:id])
-
     respond_to do |format|
       if @search.update_attributes(params[:search])
         format.html { redirect_to @search, notice: 'Search was successfully updated.' }
