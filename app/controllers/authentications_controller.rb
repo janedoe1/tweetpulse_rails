@@ -17,7 +17,7 @@ class AuthenticationsController < ApplicationController
       sign_in_and_redirect(:user, authentication.user)
     elsif current_user
       if Authentication.find_by_provider_and_uid(omniauth['provider'], omniauth['uid'])
-        flash[:error] = "This Twitter account is already a TweetPulse account. Please sign in using that account or authenticate with a different Twitter account."
+        flash[:error] = "This Twitter account is already associated with a TweetPulse account. Please sign in using that account or authenticate with a different Twitter account."
         redirect_to edit_user_registration_path
       else
         current_user.authentications.create!(:provider          => omniauth['provider'],

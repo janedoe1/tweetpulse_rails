@@ -6,7 +6,7 @@ class Search < ActiveRecord::Base
   has_many :twitter_users
   
   accepts_nested_attributes_for :terms, :twitter_users, :reject_if => lambda { |a| a[:text].blank? }
-  validates_presence_of :from_date, :to_date
+  validates_presence_of :from_date, :to_date, :count
   validates :count, :numericality => { :greater_than => 0 }
 
   #Kred API
