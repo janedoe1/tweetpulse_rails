@@ -19,3 +19,29 @@
 //= require bootstrap-datepicker
 //= require_tree .
 
+function defaultAjaxErrorHandler(result, isAjaxError) {
+  // do stuff, hide spinner etc...
+  // var defaultAjaxError = "Your friendly error message";
+  // var errorToken = "Error:";
+  //alert(result.responseText);
+  $('#loading-overlay').html(result.responseText);
+  $('#loading-overlay').delay(4000).fadeOut(2000);
+  // if(!isUndefinedOrNull(result) && !isUndefinedOrNull(result.responseText)) {
+  //     // localhost
+  //     var x = (result.responseText.length > 350) ? 350 : result.responseText.length;
+  //     alert(result.responseText.substring(0, x) + "...\n\n  - Check firebug console for more info.\n  - This message for localhost only.");
+  // }
+  // else {
+  //   // production error
+  //   alert(defaultAjaxError); 
+  // }
+}
+
+function isUndefinedOrNull(x) {
+  var u; // undefined var
+  if(x === u) { // similar to [typeof x == "undefined"]
+    return true;
+  }
+  // else
+  return x === null;
+}

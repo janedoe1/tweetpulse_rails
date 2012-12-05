@@ -1,0 +1,10 @@
+<div id="breadcrumbs">
+  <% unless tweet.nil? %>
+    <%= link_to "#{tweet.twitter_user.search.label}", search_path(tweet.twitter_user.search) %> &raquo;
+    <%= link_to "@#{tweet.twitter_user.handle}", twitter_user_path(tweet.twitter_user) %> &raquo;
+    retweets
+  <% else %>
+    <%= link_to "#{twitter_user.search.label}", search_path(twitter_user.search) %> &raquo;
+    <%= "@#{twitter_user.handle}" %>
+  <% end %>
+</div>

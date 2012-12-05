@@ -2,7 +2,7 @@
   <%= row do %>
     <%= databox("Influencers for search '#{@search.label}'", :class => 'span12') do %>
       <small class="pull-right" style="padding-top:3px;"><i class='icon-refresh'></i> <%= link_to "Refresh results", "#", :id => 'refresh-results' %></small>
-      <div id="chart" style="width:100%; height:550px;">
+      <div id="chart" style="width:100%; height:570px;">
         <% if @search.twitter_users.blank? %>
           <p style="padding-top:200px;text-align:center;">There are no results matching this search</p>
         <% end %>
@@ -10,7 +10,6 @@
     <% end %>
   <% end %>
 </div>
-
 <style type="text/css">
 
 circle.node {
@@ -66,11 +65,8 @@ function refreshResults() {
       success: function(responseData) {
         $('#search-graph').html(responseData);
         $('#loading-overlay').hide();
-      }
-      error: function() {
-        $('#loading-overlay').hide();
-        alert("There was an error refreshing the results");
-      } 
+      },
+      error: function(result) { defaultAjaxErrorHandler(responseData, true); }
   });
 }
 

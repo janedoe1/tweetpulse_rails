@@ -20,6 +20,7 @@ class Tweet < ActiveRecord::Base
   end
   
   def get_retweets current_user
+    raise Twitter::Error::TooManyRequests
     # search retweets using associated terms
     # client = Twitter::Client.new
     current_user.twitter.retweets(self.status_id, :count => 29).map do |status|
@@ -49,13 +50,12 @@ class Tweet < ActiveRecord::Base
     end
     self.retweets
   end
-
   
   def to_json current_user
     data = {:nodes => [], :links => []}
     # set root node
-    data[:nodes].push({:name => self.twitter_user.handle, :size => normalize(max_node_size), :color => 'white'})
-    self.retweets.map {|retweet| data[:nodes].push({:name => "@" + retweet.twitter_user.handle, :size =>normalize(retweet.twitter_user.follower_count) , :color => sentiment_color(self), :tweet_tooltip => Rails.application.routes.url_helpers.retweet_tooltip_path(retweet)})}
+    data[:nodes].push({:name => self.twitter_user.handle, :size => 20, :color => 'white'})
+    self.retweets.map {|retweet| data[:nodes].push({:name => "@" + retweet.twitter_user.handle, :size =>normalize(retweet.twitter_user.follower_count) , :color => self.sentiment_color, :tweet_tooltip => Rails.application.routes.url_helpers.retweet_tooltip_path(retweet)})}
     self.retweets.map.with_index {|retweet, index| data[:links].push({:source => 0, :target => index+1, :value => index, :size => 1,:length=> 400-length_normalize(Time.now-retweet.tweeted_at)})}
     Rails.logger.info data
     data.to_json
@@ -88,6 +88,24 @@ class Tweet < ActiveRecord::Base
     else
       'neutral'
     end
+  end
+  
+  def sentiment_color
+    case self.sentiment.label
+    when 'pos'
+      'green'
+    when 'neg'
+      'red'
+    else
+      'gray'
+    end
+  end
+  
+  def retweet_range
+    retweets = self.retweets.order("tweeted_at ASC")
+    from = retweets.first.tweeted_at.strftime("%h. %d at %I:%M%p")
+    to = retweets.last.tweeted_at.strftime("%h. %d at %I:%M%p")
+    "#{from} - #{to}"
   end
   
   def normalize val
@@ -134,17 +152,6 @@ class Tweet < ActiveRecord::Base
     #norm_min + (val-xmin) * (norm_range.to_f / xrange)
   end
   
-  def sentiment_color tweet
-    case tweet.sentiment.label
-    when 'pos'
-      'green'
-    when 'neg'
-      'red'
-    else
-      'gray'
-    end
-  end
-  
   def user_length_size
     Time.now-self.retweets.first.tweeted_at
   end
@@ -156,7 +163,5 @@ class Tweet < ActiveRecord::Base
   def max_length_size
     self.retweets.map {|t| (Time.now-t.tweeted_at)}.max
   end
-  
-  
   
 end

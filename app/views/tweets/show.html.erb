@@ -1,8 +1,12 @@
 <div id="tweet-graph">
+  <%= render :partial => "shared/breadcrumbs", :locals => {:tweet => @tweet, :twitter_user => nil}%>
   <%= row do %>
     <%= databox("Retweets of tweet from @#{@tweet.twitter_user.handle} ", :class => 'span12') do %>
+      <% unless @tweet.retweets.blank? %>
+        <small><%= @tweet.retweet_range %></small>
+      <% end %>
       <small class="pull-right" style="padding-top:3px;"><i class='icon-refresh'></i> <%= link_to "Refresh results", "#", :id => 'refresh-results' %></small>
-      <div id="chart" style="width:100%; height:550px;">
+      <div id="chart" style="width:100%; height:570px;">
         <% if @tweet.retweets.blank? %>
           <p style="padding-top:200px;text-align:center;">There are no retweets for this tweet</p>
         <% end %>
@@ -65,7 +69,8 @@ function refreshResults() {
       success: function(responseData) {
         $('#tweet-graph').html(responseData);
         $('#loading-overlay').hide();
-      }
+      },
+      error: function(result) { defaultAjaxErrorHandler(result, true); }
   });
 }
 

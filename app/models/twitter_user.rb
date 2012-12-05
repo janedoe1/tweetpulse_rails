@@ -1,12 +1,12 @@
-class TwitterUser < ActiveRecord::Base
+class TwitterUser < ActiveRecord::Base  
   attr_accessible :follower_count, :friend_count, :handle, :location, :user_id, :avatar, :influence, :outreach
-
+  
   belongs_to :search, :dependent => :destroy
   has_many :tweets
   has_many :retweets
   
   def get_tweets current_user
-      current_user.twitter.search(self.search_query, :count => 29).results.map do |status|
+      current_user.twitter.search(self.search_query, :count => 100).results.map do |status|
       reply_count = status.reply_count.nil? ? 0 : status.reply_count
       tweet = self.tweets.create(:status_id => status.id,
                                  :text => status.text,
@@ -30,64 +30,33 @@ class TwitterUser < ActiveRecord::Base
     "http://www.sentiment140.com/api/classify?app_id=#{email}&"
   end
   
-  def get_sentiment(text)
-    #HTTParty.post(sentiment_api_url, :body => "text=#{text}", :headers => {'Content-Type' => 'application/json'}).parsed_response
-    tweet_text = URI.encode(text.gsub(' ', '+'))
-    query_text = URI.encode(self.search.label.gsub(' ', '+'))
-    url = sentiment_api_url+"text=#{tweet_text}&query=#{query_text}"
-    #raise url.inspect
-    response = HTTParty.get(url, :headers => {'Content-Type' => 'application/json'}).parsed_response
-    Rails.logger.info "Sentiment API Results"
-    Rails.logger.info response
-    response
-  end
-  
   def tweet_range
-    tweets = self.tweets.order("tweeted_at DESC")
+    tweets = self.tweets.order("tweeted_at ASC")
     from = tweets.first.tweeted_at.strftime("%h. %d at %I:%M%p")
     to = tweets.last.tweeted_at.strftime("%h. %d at %I:%M%p")
     "#{from} - #{to}"
   end
   
-  def sentiment_label
-    #get_sentiment(text)["label"]
-    case get_sentiment(text)["results"]["polarity"]
-    when 0
-      'neg'
-    when 4
-      'pos'
-    else
-      'neutral'
-    end
-  end
-  
-  
   # search_query method is wrong!
   def search_query
-    require 'uri'
-      keywords = []
-      hashtags = []
-      self.search.terms.each do |term|
-        if term.type == "KeywordTerm"
-          keywords.push(term.text)
-        elsif term.type == "HashtagTerm"
-          hashtags.push(term.text)
-        end
+    keywords = []
+    hashtags = []
+    self.search.terms.each do |term|
+      if term.type == "KeywordTerm"
+        keywords.push(term.text)
+      elsif term.type == "HashtagTerm"
+        hashtags.push(term.text)
       end
-      handle = self.handle
-      search = ""
-      search += "from:#{handle}+" unless handle.blank?
-      search += keywords.join("+") if keywords
-      search += " ##{hashtags.join("+")}" if hashtags
+    end
+    handle = self.handle
+    search = ""
+    search += "from:#{handle}+" unless handle.blank?
+    search += keywords.join("+") if keywords
+    search += " ##{hashtags.join("+")}" if hashtags
     search=URI.encode(search)
     search = search + ' -rt'
     Rails.logger.info "Search query: #{search}"
     search
-  end
-  
-  def sentiment_probability(text, category)
-    0
-    #get_sentiment(text)["probability"][category]
   end
   
   def label
@@ -97,22 +66,11 @@ class TwitterUser < ActiveRecord::Base
   def to_json
     data = {:nodes => [], :links => []}
     # set root node
-    data[:nodes].push({:name => self.label, :size => normalize(max_node_size), :color => 'white'}) 
-    self.tweets.map {|tweet| data[:nodes].push({:name => "@" + tweet.twitter_user.handle, :size => normalize(tweet.twitter_user.follower_count), :color => sentiment_color(tweet), :tweet_tooltip => Rails.application.routes.url_helpers.tweet_tooltip_path(tweet)})}
+    data[:nodes].push({:name => self.label, :size => 20, :color => 'white'}) 
+    self.tweets.map {|tweet| data[:nodes].push({:name => tweet.tweeted_at.strftime("%h. %d"), :size => 10, :color => tweet.sentiment_color, :tweet_tooltip => Rails.application.routes.url_helpers.tweet_tooltip_path(tweet)})}
     self.tweets.map.with_index {|tweet, index| data[:links].push({:source => 0, :target => index+1, :value => index, :size => 1})}
     Rails.logger.info data
     data.to_json
-  end
-  
-  def sentiment_color tweet
-    case tweet.sentiment.label
-    when 'pos'
-      'green'
-    when 'neg'
-      'red'
-    else
-      'gray'
-    end
   end
   
   def normalize val
