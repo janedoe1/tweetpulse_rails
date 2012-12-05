@@ -75,11 +75,11 @@ class TwitterUser < ActiveRecord::Base
   end
   
   def to_csv
-    col_header = ["status_id", "tweeted_at", "text", "reply_count"]
+    col_header = ["status_id", "tweeted_at", "text", "sentiment", "reply_count"]
     CSV.generate do |csv|
       csv << col_header
       self.tweets.each do |tweet|
-        csv << tweet.attributes.values_at(*col_header)
+        csv << [tweet.status_id, tweet.tweeted_at, tweet.text, tweet.sentiment.label, tweet.reply_count]
       end
     end
   end
