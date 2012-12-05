@@ -19,6 +19,10 @@ class DashboardPresenter
     #@searches.order("created_at DESC").limit(count).collect {|search| %(["#{search.label}", #{(search.tweets.count)}])}
   end
   
+  def top_users(count=5)
+    TwitterUser.find(@twitter_users.map(&:id), :order => "follower_count DESC").take(count)
+  end
+  
   def top_influencers(count=5)
     self.influencers(count).collect {|twitter_user| %(["@#{twitter_user.handle}", #{(twitter_user.influence)}])}
   end

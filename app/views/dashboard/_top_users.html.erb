@@ -1,0 +1,20 @@
+<div style="width:95%; margin:0 auto;">
+<table class="table">
+  <thead>
+    <tr>
+      <th>User</th>
+      <th># Followers</th>
+      <th># Following</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @presenter.top_users.each do |twitter_user| %>
+      <tr>
+        <td><%= twitter_user.handle rescue '' %></td>
+        <td><%= number_with_delimiter(twitter_user.follower_count) rescue 0 %></td>
+        <td><%= number_with_delimiter(twitter_user.friend_count) rescue 0 %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+</div>
