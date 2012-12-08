@@ -3,7 +3,6 @@ class AuthenticationsController < ApplicationController
   # GET /authentications.json
   def index
     @authentications = current_user.authentications if current_user
-
   end
 
   # POST /authentications
