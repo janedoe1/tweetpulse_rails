@@ -1,6 +1,6 @@
   <% default_selected = @search.nil? ? 'all' : @search %>
   <%= row do %>
-    <%= databox("Dashboard", :class => 'span12', :inner_style => 'background:#fff;padding:;min-height:204px;') do %>
+    <%= databox("<i class='icon-bar-chart'></i> Dashboard", :class => 'span12', :inner_style => 'background:#fff;padding:;min-height:204px;') do %>
       <%= row do %>
         <%= select_tag "search", options_from_collection_for_select(@presenter.searches, :id, :label, {:selected => default_selected}), :prompt => 'all', :class => "pull-left" %>
         <%= image_tag 'loading.gif', :id => "loading", :class => "pull-left", :style => "margin:3px 0 0 10px;display:none;"%>
