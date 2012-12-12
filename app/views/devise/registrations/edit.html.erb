@@ -1,11 +1,12 @@
 <div class="page-header">
-  <h4>Edit Settings</h4>
+  <h4><i class="icon-cog"></i> Settings</h4>
 </div>
 
 <div class="tabbable"> <!-- Only required for left/right tabs -->
   <ul class="nav nav-tabs">
-    <li class="active"><a href="#tab1" data-toggle="tab">Twitter</a></li>
-    <li><a href="#tab2" data-toggle="tab">Account</a></li>
+    <li class="active"><a href="#tab1" data-toggle="tab"><i class='icon-twitter'></i>Twitter</a></li>
+    <li><a href="#tab2" data-toggle="tab"><i class='icon-search'></i>PeopleBrowsr</a></li>
+    <li><a href="#tab3" data-toggle="tab"><i class='icon-user'></i>Account</a></li>
   </ul>
   <div class="tab-content">
     <div class="tab-pane active" id="tab1">
@@ -30,6 +31,10 @@
       <% end %>
     </div>
     <div class="tab-pane" id="tab2">
+      <% @authentication = current_user.peoplebrowsr_auth.nil? ? Authentication.new : current_user.peoplebrowsr_auth %>
+      <%= render :partial => 'authentications/form', :locals => {:authentication => @authentication}%>
+    </div>
+    <div class="tab-pane" id="tab3">
       <%= simple_form_for(resource, :as => resource_name, :url => registration_path(resource_name), :html => { :method => :put, :class => 'form-horizontal'}) do |f| %>
         <%= f.error_notification %>
 

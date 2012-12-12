@@ -1,9 +1,9 @@
 class TwitterUser < ActiveRecord::Base  
   attr_accessible :follower_count, :friend_count, :handle, :location, :user_id, :avatar, :influence, :outreach
   
-  belongs_to :search, :dependent => :destroy
-  has_many :tweets
-  has_many :retweets
+  belongs_to :search
+  has_many :tweets, :dependent => :delete_all
+  has_many :retweets, :dependent => :delete_all
   
   def get_tweets current_user
     self.search.tweets.destroy_all

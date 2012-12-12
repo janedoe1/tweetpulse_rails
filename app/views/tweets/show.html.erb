@@ -1,19 +1,16 @@
 <div id="tweet-graph">
   <%= render :partial => "shared/breadcrumbs", :locals => {:tweet => @tweet, :twitter_user => nil}%>
   <%= row do %>
-    <%= databox("Retweets of tweet from @#{@tweet.twitter_user.handle} ", :class => 'span12') do %>
+    <%= databox("<i class='icon-twitter'></i> Retweets of tweet from @#{@tweet.twitter_user.handle} ", :class => 'span12') do %>
       <% unless @tweet.retweets.blank? %>
         <small><%= @tweet.retweet_range %></small>
       <% end %>
-      <small class="pull-right btn btn-mini" style="padding-top:3px;"><i class='icon-refresh'></i> <%= link_to "Refresh", "#", :id => 'refresh-results' %></small>
-      <small class="pull-right btn btn-mini" style="padding-top:3px; margin-right:3px;">
-        <i class='icon-arrow-down'></i>
-        <%= link_to "Export", tweet_path(@tweet, format:'csv') %>
+      <small class="pull-right btn btn-mini" style="padding-top:3px;"><%= link_to raw("<i class='icon-refresh'></i> Refresh"), "#", :id => 'refresh-results' %></small>
+      <small id='export' class="pull-right btn btn-mini" style="padding-top:3px; margin-right:3px;">
+        <%= link_to raw("<i class='icon-download-alt'></i> Export"), tweet_path(@tweet, format:'csv') %>
       </small>
       <div id="chart" style="width:100%; height:570px;">
-        <% if @tweet.retweets.blank? %>
-          <p style="padding-top:200px;text-align:center;">There are no retweets for this tweet</p>
-        <% end %>
+        <p class='show-failure' style="padding-top:200px;text-align:center;display:none;">There are no retweets for this tweet</p>
       </div>
     <% end %>
   <% end %>
@@ -59,6 +56,7 @@ $(document).ready(function() {
   if(retweet_count == 0) {
     refreshResults();
   } else {
+    $('#export').show();
     drawChart();
   }
   $('#refresh-results').click(function(){
@@ -74,7 +72,10 @@ function refreshResults() {
         $('#tweet-graph').html(responseData);
         $('#loading-overlay').hide();
       },
-      error: function(result) { defaultAjaxErrorHandler(result, true); }
+      error: function(result) {
+        $('.show-failure').show();
+        defaultAjaxErrorHandler(result, true);
+      }
   });
 }
 

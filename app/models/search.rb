@@ -3,17 +3,17 @@ class Search < ActiveRecord::Base
   belongs_to :user
   has_and_belongs_to_many :terms
   has_many :tweets
-  has_many :twitter_users
+  has_many :twitter_users, :dependent => :delete_all
   
   accepts_nested_attributes_for :terms, :twitter_users, :reject_if => lambda { |a| a[:text].blank? }
   validates_presence_of :from_date, :to_date, :count
   validates :count, :numericality => { :greater_than => 0 }
 
   #Kred API
-  def get_twitter_users
-    app_id = "5e918fed"
-    app_key = "0e413b1d6831771be8af2bb2999508db"
-    api = Kred::KredAPI.new(app_id, app_key)
+  def get_twitter_users current_user
+    # app_id = "5e918fed"
+    #     app_key = "0e413b1d6831771be8af2bb2999508db"
+    #     api = Kred::KredAPI.new(app_id, app_key)
     
     source = "twitter"
     term = self.search_query
@@ -22,7 +22,7 @@ class Search < ActiveRecord::Base
     count = "30"
     number = "50"
     Rails.logger.info "Calling PeopleBrowsr API..."
-    response = api.kred_retweet_influence(source: source, 
+    response = current_user.peoplebrowsr.kred_retweet_influence(source: source, 
                                term: term,
                                last: last,
                                count: count,

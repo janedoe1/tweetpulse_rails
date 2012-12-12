@@ -2,10 +2,27 @@ class ApplicationController < ActionController::Base
   protect_from_forgery
   before_filter :authenticate_user!
   rescue_from Twitter::Error::TooManyRequests, :with => :handler_exception
+  rescue_from ActiveRecord::RecordNotFound, :with => :record_not_found
   
   def check_twitter_auth
     unless !!current_user.authentications.find_by_provider('twitter')
       flash[:error] = "You must authenticate with Twitter before creating searches."
+      redirect_to edit_user_registration_path
+    end
+  end
+  
+  def check_peoplebrowsr_auth
+    unless !!current_user.authentications.find_by_provider('peoplebrowsr')
+      flash[:error] = "You must authenticate with PeopleBrowsr before creating searches."
+      redirect_to edit_user_registration_path
+    end
+  end
+  
+  def record_not_found
+    flash[:error] = 'Record not found'
+    if current_user.twitter_auth && current_user.peoplebrowsr_auth
+      redirect_to dashboard_path
+    else
       redirect_to edit_user_registration_path
     end
   end

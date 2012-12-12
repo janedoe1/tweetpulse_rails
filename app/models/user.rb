@@ -22,8 +22,17 @@ class User < ActiveRecord::Base
     @twitter_user
   end
   
+  def peoplebrowsr
+    authentication = self.authentications.find_by_provider('peoplebrowsr')
+    Kred::KredAPI.new(authentication.token, authentication.secret)
+  end
+  
   def twitter_auth
     self.authentications.find_by_provider('twitter')
+  end
+  
+  def peoplebrowsr_auth
+    self.authentications.find_by_provider('peoplebrowsr')
   end
   
   def name

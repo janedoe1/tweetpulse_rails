@@ -5,8 +5,8 @@ class Tweet < ActiveRecord::Base
   
   belongs_to :search
   belongs_to :twitter_user
-  has_one :sentiment
-  has_many :retweets
+  has_one :sentiment, :dependent => :destroy
+  has_many :retweets, :dependent => :delete_all
   
   scope :positive, includes(:sentiment).where("sentiment.label=?", "pos")
   scope :negative, where(:is_enabled => true, :is_archived => false)

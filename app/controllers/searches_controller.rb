@@ -88,15 +88,15 @@ class SearchesController < ApplicationController
   def refresh_results
     @search = current_user.searches.find(params[:search_id])
     @search.twitter_users.delete_all if @search.twitter_users
-    get_api_matches(@search)
+    get_api_matches(current_user, @search)
     render :show
   end
   
   protected
   
-  def get_api_matches search
+  def get_api_matches current_user, search
     begin
-      search.get_twitter_users
+      search.get_twitter_users(current_user)
     rescue => e
       Rails.logger.info e.message
       flash[:error] = 'API is not responding. Please try again in a few minutes.'
