@@ -75,7 +75,7 @@ class AuthenticationsController < ApplicationController
   def destroy
     @authentication = current_user.authentications.find(params[:id])
     @authentication.destroy
-    flash[:notice] = "Twitter deauthorized"
+    flash[:notice] = "Service deauthorized"
     redirect_to edit_user_registration_path
   end
 end

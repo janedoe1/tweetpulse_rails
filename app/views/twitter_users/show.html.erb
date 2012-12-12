@@ -10,6 +10,7 @@
         <%= link_to raw("<i class='icon-download-alt'></i> Export"), twitter_user_path(@twitter_user, format:'csv') %>
       </small>
       <%= render :partial => 'twitter_user_graph' %>
+      <%= render :partial => 'shared/sentiment_legend' %>
     <% end %>
   <% end %>
 </div>

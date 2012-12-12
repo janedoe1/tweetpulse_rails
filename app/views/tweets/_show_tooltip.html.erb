@@ -18,4 +18,5 @@
 <div style="clear:both;margin-top:10px;">
   <small>Tweeted on <%= tweet_date(@tweet.tweeted_at) %></small>
   <p style="margin-top:5px;color:black;font-weight: bold"><%= @tweet.text %></p>
+  <small><%= link_to 'View on Twitter »', link_to_tweet(@tweet), :target => '_blank' %></small>
 </div>

@@ -3,7 +3,7 @@
   <%= f.input :secret, :label => "API Key" %>
   <div class="form-actions">
     <%= f.button :submit, :class => 'btn-primary' %>
-    <%= link_to t('.cancel', :default => t("helpers.links.cancel")),
-                authentications_path, :class => 'btn' %>
+    <%= link_to 'Deauthorize', authentication_path(@authentication), :method => :delete, :class => 'btn' if current_user.peoplebrowsr_auth %>
   </div>
 <% end %>
+

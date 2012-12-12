@@ -9,12 +9,7 @@ class Search < ActiveRecord::Base
   validates_presence_of :from_date, :to_date, :count
   validates :count, :numericality => { :greater_than => 0 }
 
-  #Kred API
   def get_twitter_users current_user
-    # app_id = "5e918fed"
-    #     app_key = "0e413b1d6831771be8af2bb2999508db"
-    #     api = Kred::KredAPI.new(app_id, app_key)
-    
     source = "twitter"
     term = self.search_query
     #first = self.from_date
@@ -122,7 +117,7 @@ class Search < ActiveRecord::Base
   data = {:nodes => [], :links => []}
     # set root node
     data[:nodes].push({:name => self.label, :size => 20, :color => 'white'}) 
-    self.twitter_users.map {|twitteruser| data[:nodes].push({:name => "@" + twitteruser.handle, :size => normalize(twitteruser.follower_count), :color => '#08C',:avatar =>twitteruser.avatar,:twitter_user_tooltip => Rails.application.routes.url_helpers.twitter_user_tooltip_path(twitteruser)})}
+    self.twitter_users.map {|twitteruser| data[:nodes].push({:name => "@" + twitteruser.handle, :size => normalize(twitteruser.follower_count), :color => '#F7B100',:avatar =>twitteruser.avatar,:twitter_user_tooltip => Rails.application.routes.url_helpers.twitter_user_tooltip_path(twitteruser)})}
     self.twitter_users.map.with_index {|tweet, index| data[:links].push({:source => 0, :target => index+1, :value => index, :size => 1})}
     Rails.logger.info data
     data.to_json
@@ -151,11 +146,11 @@ class Search < ActiveRecord::Base
   def sentiment_color tweet
     case tweet.sentiment.label
     when 'pos'
-      'green'
+      '#86B704'
     when 'neg'
-      'red'
+      '#F13943'
     else
-      'gray'
+      '#0162D3'
     end
   end
   

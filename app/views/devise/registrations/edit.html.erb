@@ -15,7 +15,7 @@
           <%= image_tag current_user.twitter_auth.profile_image_url, :class => "img-polaroid pull-left", :style => 'margin:8px 0 0 5px;'%>
           <div class="caption pull-right" style="width:300px;">
             <p style="padding-top:5px;font-size:1.1em;">
-              <%= image_tag "https://twitter.com/images/resources/twitter-bird-light-bgs.png", :width => 30 %> Authorized as <%= link_to "@#{current_user.authentications.first.username}", twitter_user_page(current_user.twitter_auth.username) %></p>
+              <%= image_tag "https://twitter.com/images/resources/twitter-bird-light-bgs.png", :width => 30 %> Authorized as <%= link_to "@#{current_user.twitter_auth.username}", twitter_user_page(current_user.twitter_auth.username) %></p>
             <%= button_to "Deauthorize", authentication_path(current_user.twitter_auth), :method => :delete, :class => 'btn', :style => 'padding:5px 10px; border-radius:3px;' %>
           </div>
         </div>

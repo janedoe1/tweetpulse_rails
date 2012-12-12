@@ -1,5 +1,6 @@
 class SearchesController < ApplicationController
   before_filter :check_twitter_auth
+  before_filter :check_peoplebrowsr_auth
   layout proc {|controller| controller.request.xhr? ? false: "application" }
 #  before_filter :build_gexf, :only => :show
   # GET /searches

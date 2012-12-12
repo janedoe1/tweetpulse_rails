@@ -53,9 +53,9 @@ class Tweet < ActiveRecord::Base
   def to_json current_user
     data = {:nodes => [], :links => []}
     # set root node
-    data[:nodes].push({:name => self.twitter_user.handle, :size => 20, :color => 'white'})
+    data[:nodes].push({:name => self.twitter_user.handle, :size => 20, :color => self.sentiment_color})
     self.retweets.map {|retweet| data[:nodes].push({:name => "@" + retweet.twitter_user.handle, :size =>normalize(retweet.twitter_user.follower_count) , :color => self.sentiment_color, :tweet_tooltip => Rails.application.routes.url_helpers.retweet_tooltip_path(retweet)})}
-    self.retweets.map.with_index {|retweet, index| data[:links].push({:source => 0, :target => index+1, :value => index, :size => self.thickness(retweet.twitter_user), :length=> 400-length_normalize(Time.now-retweet.tweeted_at)})}
+    self.retweets.map.with_index {|retweet, index| data[:links].push({:source => 0, :target => index+1, :value => index, :size => self.thickness(retweet.twitter_user), :length=> 400-length_normalize(Time.now.to_i-retweet.tweeted_at.to_i)})}
     Rails.logger.info data
     data.to_json
   end
@@ -103,11 +103,11 @@ class Tweet < ActiveRecord::Base
   def sentiment_color
     case self.sentiment.label
     when 'pos'
-      'green'
+      '#86B704'
     when 'neg'
-      'red'
+      '#F13943'
     else
-      '#08C'
+      '#0162D3'
     end
   end
   

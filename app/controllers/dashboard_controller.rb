@@ -1,5 +1,6 @@
 class DashboardController < ApplicationController
   before_filter :check_twitter_auth
+  before_filter :check_peoplebrowsr_auth
   before_filter :prepare_data, :only => :index
   
   def index

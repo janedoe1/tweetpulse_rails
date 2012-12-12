@@ -69,7 +69,7 @@ class TwitterUser < ActiveRecord::Base
     # set root node
     data[:nodes].push({:name => self.label, :size => 20, :color => 'white'}) 
     self.tweets.map {|tweet| data[:nodes].push({:name => tweet.tweeted_at.strftime("%h. %d"), :size => 10, :color => tweet.sentiment_color, :tweet_tooltip => Rails.application.routes.url_helpers.tweet_tooltip_path(tweet)})}
-    self.tweets.map.with_index {|tweet, index| data[:links].push({:source => 0, :target => index+1, :value => index, :size => 1})}
+    self.tweets.map.with_index {|tweet, index| data[:links].push({:source => 0, :target => index+1, :value => index, :size => 1, :length=> 400-length_normalize(DateTime.now.to_i-tweet.tweeted_at.to_i)})}
     Rails.logger.info data
     data.to_json
   end
@@ -123,23 +123,21 @@ class TwitterUser < ActiveRecord::Base
       Rails.logger.info 'Twitter rate limit exceeded'
       return e
     end
-    
-    # cursor = -1
-    #    followerIds = []
-    #    until cursor == 0 do
-    #      begin
-    #        followers = client.follower_ids(self.user_id.to_i,{:cursor=>cursor})
-         # rescue Twitter::Error::TooManyRequests => e
-         #   puts e
-         #   Rails.logger.info 'Twitter rate limit exceeded'
-         #   return e
-         # end
-    #      cursor = followers.next_cursor
-    #      followerIds += followers.ids
-    #      sleep(2)
-    #    end
-    #    followerIds.count
   end
-  
+  def length_normalize val
+    unless min_node_size == max_node_size
+      xmin = min_length_size
+      xmax = max_length_size
+      norm_min = 100
+      norm_max = 200
+      xrange = xmax-xmin
+      norm_range = norm_max-norm_min
+      (val-xmin).to_f * (norm_max.to_f - norm_min.to_f) / (xmax.to_f - xmin.to_f) + norm_min
+    else
+      100
+    end
+    #y = 1 + (x-A)*(10-1)/(B-A)
+    #norm_min + (val-xmin) * (norm_range.to_f / xrange)
+  end
   
 end
