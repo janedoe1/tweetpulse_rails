@@ -1,6 +1,6 @@
 <%= simple_form_for @authentication, :html => { :class => 'form-horizontal' } do |f| %>
-  <%= f.input :token, :label => "Application ID" %>
-  <%= f.input :secret, :label => "API Key" %>
+  <%= f.input :token, :label => "Application ID", :as => :password %>
+  <%= f.input :secret, :label => "API Key", :as => :password %>
   <div class="form-actions">
     <%= f.button :submit, :class => 'btn-primary' %>
     <%= link_to 'Deauthorize', authentication_path(@authentication), :method => :delete, :class => 'btn' if current_user.peoplebrowsr_auth %>
