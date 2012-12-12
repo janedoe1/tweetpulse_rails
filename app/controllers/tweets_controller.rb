@@ -106,7 +106,8 @@ class TweetsController < ApplicationController
       Rails.logger.info e.message
       flash[:error] = 'Twitter page not found.'
     end
-    redirect_to tweet_path(@tweet)
+    render :show
+    #redirect_to tweet_path(@tweet)
   end
 
 end

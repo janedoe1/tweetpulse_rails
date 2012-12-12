@@ -9,14 +9,7 @@
       <small id='export' class="pull-right btn btn-mini" style="padding-top:3px; margin-right:3px;display:none;">
         <%= link_to raw("<i class='icon-download-alt'></i> Export"), twitter_user_path(@twitter_user, format:'csv') %>
       </small>
-      <div id="chart" style="width:100%; height:570px;">
-        <% if @twitter_user.tweets.blank? %>
-          <p class='show-failure' style="padding-top:200px;text-align:center;display:none;">
-            There are no tweets matching this user.
-            <small><a href="#" class="no-results" rel="tooltip" data-html="true" title="While our user search has years of data, our tweet search is limited by Twitter's Search API constraints. <br/><br/>This may cause some searches to have user results but no tweet results." data-placement="right" data-trigger='click'>Why?</a></small>
-          </p>
-        <% end %>
-      </div>
+      <%= render :partial => 'twitter_user_graph' %>
     <% end %>
   <% end %>
 </div>
@@ -54,8 +47,6 @@ text.shadow {
   stroke-opacity: 1;
 }
     </style>
-  </head>
-  <body>
     
 <script type="text/javascript">
 

@@ -25,9 +25,7 @@ class Tweet < ActiveRecord::Base
     # search retweets using associated terms
     # client = Twitter::Client.new
     current_user.twitter.retweets(self.status_id, :count => 29).map do |status|
-      app_id = "5e918fed"
-      app_key = "0e413b1d6831771be8af2bb2999508db"
-      api = Kred::KredAPI.new(app_id, app_key)
+      api = current_user.peoplebrowsr
       
       source = "twitter"
       term = status.user.screen_name.downcase 

@@ -7,9 +7,7 @@
       <small id='export' class="pull-right btn btn-mini" style="padding-top:3px; margin-right:3px;display:none;">
         <%= link_to raw("<i class='icon-download-alt'></i> Export"), search_path(@search, format:'csv') %>
       </small>
-      <div id="chart" style="width:100%; height:570px;">
-        <p class='show-failure' style="padding-top:200px;text-align:center;display:none;">There are no results matching this search</p>
-      </div>
+      <%= render :partial => 'search_graph' %>
     <% end %>
   <% end %>
 </div>

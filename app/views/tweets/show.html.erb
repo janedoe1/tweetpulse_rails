@@ -3,15 +3,13 @@
   <%= row do %>
     <%= databox("<i class='icon-twitter'></i> Retweets of tweet from @#{@tweet.twitter_user.handle} ", :class => 'span12') do %>
       <% unless @tweet.retweets.blank? %>
-        <small><%= @tweet.retweet_range %></small>
+        <small class="graph-metadata"><%= @tweet.retweet_range %></small>
       <% end %>
       <small class="pull-right btn btn-mini" style="padding-top:3px;"><%= link_to raw("<i class='icon-refresh'></i> Refresh"), "#", :id => 'refresh-results' %></small>
       <small id='export' class="pull-right btn btn-mini" style="padding-top:3px; margin-right:3px;">
         <%= link_to raw("<i class='icon-download-alt'></i> Export"), tweet_path(@tweet, format:'csv') %>
       </small>
-      <div id="chart" style="width:100%; height:570px;">
-        <p class='show-failure' style="padding-top:200px;text-align:center;display:none;">There are no retweets for this tweet</p>
-      </div>
+      <%= render :partial => 'tweet_graph' %>
     <% end %>
   <% end %>
 </div>
