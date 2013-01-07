@@ -6,7 +6,7 @@ class Tweet < ActiveRecord::Base
   belongs_to :search
   belongs_to :twitter_user
   has_one :sentiment, :dependent => :destroy
-  has_many :retweets, :dependent => :delete_all
+  has_many :retweets, :dependent => :destroy
   
   scope :positive, includes(:sentiment).where("sentiment.label=?", "pos")
   scope :negative, where(:is_enabled => true, :is_archived => false)
@@ -53,7 +53,7 @@ class Tweet < ActiveRecord::Base
   def to_json current_user
     data = {:nodes => [], :links => []}
     # set root node
-    data[:nodes].push({:name => self.twitter_user.handle, :size => 20, :color => self.sentiment_color})
+    data[:nodes].push({:name => "@#{self.twitter_user.handle}", :size => 20, :color => self.sentiment_color})
     self.retweets.map {|retweet| data[:nodes].push({:name => "@" + retweet.twitter_user.handle, :size =>normalize(retweet.twitter_user.follower_count) , :color => self.sentiment_color, :tweet_tooltip => Rails.application.routes.url_helpers.retweet_tooltip_path(retweet)})}
     self.retweets.map.with_index {|retweet, index| data[:links].push({:source => 0, :target => index+1, :value => index, :size => self.thickness(retweet.twitter_user), :length=> 400-length_normalize(Time.now.to_i-retweet.tweeted_at.to_i)})}
     Rails.logger.info data

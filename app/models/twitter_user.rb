@@ -2,12 +2,15 @@ class TwitterUser < ActiveRecord::Base
   attr_accessible :follower_count, :friend_count, :handle, :location, :user_id, :avatar, :influence, :outreach
   
   belongs_to :search
-  has_many :tweets, :dependent => :delete_all
-  has_many :retweets, :dependent => :delete_all
+  has_many :tweets, :dependent => :destroy
+  has_many :retweets, :dependent => :destroy
   
   def get_tweets current_user
-    self.search.tweets.destroy_all
+    self.tweets.destroy_all
+    puts "getting tweets for user #{self.id}"
+    begin
     current_user.twitter.search(self.search_query, :count => 100).results.map do |status|
+      puts status.text
       reply_count = status.reply_count.nil? ? 0 : status.reply_count
       tweet = self.tweets.create(:status_id => status.id.to_s,
                                  :text => status.text,
@@ -17,6 +20,9 @@ class TwitterUser < ActiveRecord::Base
                                  :search_id => self.search_id)
       Sentiment.create(:tweet_id => tweet.id, 
                        :label => tweet.sentiment_label)
+    end
+    rescue Twitter::Error::TooManyRequests => e
+      puts e
     end
     self.tweets
   end
@@ -52,11 +58,13 @@ class TwitterUser < ActiveRecord::Base
     handle = self.handle
     search = ""
     search += "from:#{handle}+" unless handle.blank?
-    search += keywords.join("+") if keywords
-    search += " ##{hashtags.join("+")}" if hashtags
+    search += keywords.join("+") unless keywords.blank?
+    search += " ##{hashtags.join("+")}" unless hashtags.blank?
+    puts "Search query before encode: #{search}"
     search=URI.encode(search)
     search = search + ' -rt'
     Rails.logger.info "Search query: #{search}"
+    puts "Search query: #{search}"
     search
   end
   
@@ -67,9 +75,9 @@ class TwitterUser < ActiveRecord::Base
   def to_json
     data = {:nodes => [], :links => []}
     # set root node
-    data[:nodes].push({:name => self.label, :size => 20, :color => 'white'}) 
+    data[:nodes].push({:name => "#{self.label}", :size => 20, :color => 'white'}) 
     self.tweets.map {|tweet| data[:nodes].push({:name => tweet.tweeted_at.strftime("%h. %d"), :size => 10, :color => tweet.sentiment_color, :tweet_tooltip => Rails.application.routes.url_helpers.tweet_tooltip_path(tweet)})}
-    self.tweets.map.with_index {|tweet, index| data[:links].push({:source => 0, :target => index+1, :value => index, :size => 1, :length=> 400-length_normalize(DateTime.now.to_i-tweet.tweeted_at.to_i)})}
+    self.tweets.map.with_index {|tweet, index| data[:links].push({:source => 0, :target => index+1, :value => index, :size => 1, :length=> 200})}
     Rails.logger.info data
     data.to_json
   end

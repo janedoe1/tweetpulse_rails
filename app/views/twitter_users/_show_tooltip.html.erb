@@ -6,7 +6,7 @@
     <%= image_tag @twitter_user.avatar, :class => "img-polaroid" %>
   </div>
   <div style="width:250px; float:left;">
-    <h4 style="margin:0 0 5px 0;"><%= link_to "@#{@twitter_user.handle}", twitter_user_page(@twitter_user.handle)  %></h4>
+    <h4 style="margin:0 0 5px 0;"><%= link_to "@#{@twitter_user.handle}", twitter_user_page(@twitter_user.handle), :target => '_blank'  %></h4>
     <small><%= number_with_delimiter(@twitter_user.follower_count, :delimiter => ',') %> followers</small><br/>
     <small><%= number_with_delimiter(@twitter_user.friend_count, :delimiter => ',') %> following</small>
   </div>

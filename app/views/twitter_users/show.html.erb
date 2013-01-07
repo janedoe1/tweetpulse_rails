@@ -54,7 +54,7 @@ text.shadow {
 $(document).ready(function() {
   var tweet_count = <%= @twitter_user.tweets.count %>;
   if(tweet_count == 0) {
-    refreshResults();
+    //refreshResults();
   } else {
     $('#export').show();
     drawChart();
@@ -71,7 +71,13 @@ function refreshResults() {
       success: function(responseData) {
         $('#twitter-user-graph').html(responseData);
         $('#loading-overlay').hide();
-        $('#export').show();
+        var tweet_count = <%= @twitter_user.tweets.count %>
+        if(tweet_count == 0) {
+          $('.show-failure').show();
+          $('.no-results').tooltip();
+        } else {
+          $('#export').show();
+        }
       },
       error: function(result) {
         $('.show-failure').show();
